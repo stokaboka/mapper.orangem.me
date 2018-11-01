@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hhh LpR fFf">
+  <q-layout view="hHh LpR fff">
 
     <q-layout-header>
 
@@ -66,11 +66,11 @@
       <router-view />
     </q-page-container>
 
-    <q-layout-footer>
-      <q-toolbar-title>
-        Mapper
-      </q-toolbar-title>
-    </q-layout-footer>
+    <!--<q-layout-footer color="primary">-->
+      <!--<q-toolbar-title>-->
+        <!--Mapper-->
+      <!--</q-toolbar-title>-->
+    <!--</q-layout-footer>-->
 
   </q-layout>
 </template>

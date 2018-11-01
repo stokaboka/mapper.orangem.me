@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <!-- content -->
-    The ABout page
+    The About page
   </q-page>
 </template>
 
