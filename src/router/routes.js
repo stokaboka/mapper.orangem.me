@@ -12,7 +12,19 @@ const routes = [
     component: () => import('layouts/Main.vue'),
     children: [
       {
-        path: ['', 'map', 'map/lon/:lon/lat/:lat/zoom/:zoom'],
+        path: 'about',
+        component: () => import('pages/About.vue')
+      },
+      {
+        path: '',
+        component: () => import('pages/Map.vue')
+      },
+      {
+        path: 'map',
+        component: () => import('pages/Map.vue')
+      },
+      {
+        path: 'map/lon/:lon/lat/:lat/zoom/:zoom',
         component: () => import('pages/Map.vue')
       },
       {

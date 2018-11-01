@@ -21,9 +21,8 @@
 
         <q-tabs>
           <q-route-tab slot="title" icon="view_quilt" to="/about" replace hide="icon" label="About" />
-          <q-route-tab slot="title" icon="view_day" to="/map" replace hide="icon" label="Toolbar" />
-          <q-route-tab slot="title" icon="view_day" to="/test-layout/tabs" replace label="Tabs" />
-          <q-route-tab slot="title" icon="input" to="/test-layout/drawer" replace label="Drawer" />
+          <q-route-tab slot="title" icon="view_day" to="/map" replace hide="icon" label="Map" />
+          <q-route-tab slot="title" icon="view_day" to="/settings" replace label="Settings" />
         </q-tabs>
 
       </q-toolbar>
