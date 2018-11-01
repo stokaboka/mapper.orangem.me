@@ -1,17 +1,15 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hhh LpR fFf">
+
     <q-layout-header>
-      <q-toolbar
-        color="primary"
-        :glossy="$q.theme === 'mat'"
-        :inverted="$q.theme === 'ios'"
-      >
+
+      <q-toolbar color="primary">
         <q-btn
           flat
           dense
           round
           @click="leftDrawerOpen = !leftDrawerOpen"
-          aria-label="Menu"
+          aria-label="Left Menu"
         >
           <q-icon name="menu" />
         </q-btn>
@@ -20,7 +18,16 @@
           Mapper
           <div slot="subtitle">The Mapper is a high performance mapping system v{{ $q.version }}</div>
         </q-toolbar-title>
+
+        <q-tabs>
+          <q-route-tab slot="title" icon="view_quilt" to="/about" replace hide="icon" label="About" />
+          <q-route-tab slot="title" icon="view_day" to="/map" replace hide="icon" label="Toolbar" />
+          <q-route-tab slot="title" icon="view_day" to="/test-layout/tabs" replace label="Tabs" />
+          <q-route-tab slot="title" icon="input" to="/test-layout/drawer" replace label="Drawer" />
+        </q-tabs>
+
       </q-toolbar>
+
     </q-layout-header>
 
     <q-layout-drawer
@@ -59,14 +66,22 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-layout-footer>
+      <q-toolbar-title>
+        Mapper
+      </q-toolbar-title>
+    </q-layout-footer>
+
   </q-layout>
 </template>
 
 <script>
+
 import { openURL } from 'quasar'
 
 export default {
-  name: 'MyLayout',
+  name: 'Main',
   data () {
     return {
       leftDrawerOpen: this.$q.platform.is.desktop

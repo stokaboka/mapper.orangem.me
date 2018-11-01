@@ -1,10 +1,24 @@
 
 const routes = [
+  // {
+  //   path: '/',
+  //   component: () => import('layouts/MyLayout.vue'),
+  //   children: [
+  //     { path: '', component: () => import('pages/Index.vue') }
+  //   ]
+  // }
   {
     path: '/',
-    component: () => import('layouts/MyLayout.vue'),
+    component: () => import('layouts/Main.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      {
+        path: ['', 'map', 'map/lon/:lon/lat/:lat/zoom/:zoom'],
+        component: () => import('pages/Map.vue')
+      },
+      {
+        path: 'settings',
+        component: () => import('pages/Settings.vue')
+      }
     ]
   }
 ]
