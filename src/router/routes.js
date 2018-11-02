@@ -18,6 +18,7 @@ const routes = [
         component: () => import('pages/Map.vue')
       },
       {
+        name: 'map',
         path: 'map/lon/:lon/lat/:lat/zoom/:zoom',
         component: () => import('pages/Map.vue')
       },
