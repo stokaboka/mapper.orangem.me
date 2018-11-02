@@ -55,7 +55,6 @@ export default {
 
   mounted () {
     this.initTiles()
-    this.initTiles()
   },
 
   methods: {
