@@ -146,6 +146,14 @@ class TilesCalculator {
     )
   }
 
+  tileToPixels (tile) {
+    this.testZoom()
+    return new DecartPoint(
+      tile.x * this.tileSize,
+      tile.y * this.tileSize
+    )
+  }
+
   pipe (pList) {
     this.pipeList = pList
     return this

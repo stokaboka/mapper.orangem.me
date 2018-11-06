@@ -5,6 +5,7 @@
 // const TilesCalculator = require('./TilesCalculator')
 
 import TilesCalculator from './TilesCalculator'
+import axios from 'axios'
 
 class MappingArea {
   constructor (pAreaSize) {
@@ -12,6 +13,8 @@ class MappingArea {
     if (pAreaSize) {
       this.areaSize = pAreaSize
     }
+
+    this.tilesLoaderUrl = 'http://localhost:3000/mapper'
 
     this.halfAreaSize = Math.ceil(this.areaSize / 2)
 
@@ -33,6 +36,24 @@ class MappingArea {
   setZoom (value) {
     this.tilesCalculator.zoom = value
     return this
+  }
+
+  doLoadTiles (geoPoint, reload) {
+    if (geoPoint) {
+      const url = `${this.tilesLoaderUrl}/lon/${geoPoint.lon}/lat/${geoPoint.lat}/zoom/${this.getZoom()}/reload/${reload}`
+      axios.get(url,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((results) => {
+          console.log(results)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
   }
 
   setGeoPoint (point) {
@@ -61,8 +82,12 @@ class MappingArea {
 
   getGrid () {
     let tilePoint = null
+    let geoPoint = null
     switch (this.typePoint) {
       case 'GEO':
+
+        geoPoint = this.point
+
         tilePoint = this.tilesCalculator
           .pipe([
             this.tilesCalculator.geoToMeter,
@@ -71,7 +96,14 @@ class MappingArea {
           ])
           .calc(this.point)
         break
+
       case 'METER':
+
+        geoPoint = this.tilesCalculator
+          .pipe([
+            this.tilesCalculator.meterToGeo
+          ]).calc(this.point)
+
         tilePoint = this.tilesCalculator
           .pipe([
             this.tilesCalculator.meterToPixels,
@@ -79,19 +111,40 @@ class MappingArea {
           ])
           .calc(this.point)
         break
+
       case 'PIXEL':
+
+        geoPoint = this.tilesCalculator
+          .pipe([
+            this.tilesCalculator.pixelsToMeter,
+            this.tilesCalculator.meterToGeo
+          ]).calc(this.point)
+
         tilePoint = this.tilesCalculator
           .pipe([
             this.tilesCalculator.pixelToTile
           ])
           .calc(this.point)
         break
+
       case 'TILE':
+
+        geoPoint = this.tilesCalculator
+          .pipe([
+            this.tilesCalculator.tileToPixels,
+            this.tilesCalculator.pixelsToMeter,
+            this.tilesCalculator.meterToGeo
+          ]).calc(this.point)
+
         tilePoint = this.point
         break
+
       default:
         return null
     }
+
+    this.doLoadTiles(geoPoint, 0)
+
     return {
       begin: {
         x: tilePoint.x - this.halfAreaSize,

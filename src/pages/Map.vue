@@ -7,13 +7,13 @@
       v-touch-pan.prevent="onTouchPan"
     >
 
-      <canvas
-        ref="canvas"
-        class="mapper-layer-map"
-        :width="canvasSize"
-        :height="canvasSize"
-        v-touch-pan.prevent="onTouchPan"
-      ></canvas>
+      <map-layer
+        :m-width-tiles="tilesByX"
+        :m-height-tiles="tilesByY"
+        :m-zoom="zoom"
+        :m-geo-point="geoPoint"
+      >
+      </map-layer>
 
     </div>
 
@@ -22,16 +22,18 @@
 
 <script>
 
-import MappingArea from '../lib/mapper/MappingArea'
+import MapLayer from '../components/MapLayer'
 
 export default {
   name: 'Map',
+  components: {MapLayer},
   data () {
     return {
       zoom: 12,
       geoPoint: { lon: 39.849086, lat: 57.303309 },
-      canvasSize: 6 * 256,
-      tilesUrl: 'http://localhost:3000/images',
+
+      tilesByX: 6,
+      tilesByY: 6,
 
       layersTop: 0,
       layersLeft: 0
@@ -49,56 +51,7 @@ export default {
     }
   },
 
-  created () {
-
-  },
-
-  mounted () {
-    this.initTiles()
-  },
-
   methods: {
-    initTiles: function (lon, lat, zoom) {
-      const mappingArea = new MappingArea()
-
-      let grid = mappingArea
-        .setZoom(this.zoom)
-        .setGeoPoint(this.geoPoint)
-        .getGrid()
-
-      this.setRoute(this.geoPoint, this.zoom)
-
-      this.loadTiles(grid)
-    },
-
-    getTileImageFileName: function (x, y) {
-      return `${this.tilesUrl}/${this.zoom}/${x}-${y}.png`
-    },
-
-    loadTiles: function (grid) {
-      let ctx = this.$refs.canvas.getContext('2d')
-
-      for (let x = 0; x < grid.size.x; x++) {
-        for (let y = 0; y < grid.size.y; y++) {
-          this.loadTile(ctx, grid.begin, x, y)
-        }
-      }
-    },
-
-    loadTile: function (ctx, begin, x, y) {
-      let img = new Image()
-      let self = this
-
-      img.addEventListener('load', function (event) {
-        ctx.drawImage(this, x * 256, y * 256)
-      })
-
-      img.addEventListener('error', function (event) {
-        console.log(self)
-      })
-
-      img.src = this.getTileImageFileName(begin.x + x, begin.y + y)
-    },
 
     setRoute (geoPoint, zoom) {
       let newRoute = Object.assign(
@@ -118,10 +71,10 @@ export default {
 
   watch: {
     '$route' (to, from) {
-      // react to route changes...
+      console.log('Map')
       console.log(from)
       console.log(to)
-      this.initTiles()
+      // this.initTiles()
     }
   }
 
