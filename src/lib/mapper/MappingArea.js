@@ -8,26 +8,19 @@ import TilesCalculator from './TilesCalculator'
 import axios from 'axios'
 
 class MappingArea {
-  constructor (pAreaSize) {
-    this.areaSize = 6
-    if (pAreaSize) {
-      this.areaSize = pAreaSize
-    }
+  constructor (pAreaSizeWidth, pAreaSizeHeight) {
+    this.areaSizeWidth = pAreaSizeWidth
+    this.areaSizeHeight = pAreaSizeHeight
 
     this.tilesLoaderUrl = 'http://localhost:3000/mapper'
 
-    this.halfAreaSize = Math.ceil(this.areaSize / 2)
+    this.halfAreaSizeWidth = Math.ceil(this.areaSizeWidth / 2)
+    this.halfAreaSizeHeight = Math.ceil(this.areaSizeHeight / 2)
 
     this.tilesCalculator = new TilesCalculator()
 
     this.point = null
     this.typePoint = null
-  }
-
-  setAreaSize (value) {
-    this.areaSize = value
-    this.halfAreaSize = Math.ceil(this.value / 2)
-    return this
   }
 
   getZoom () {
@@ -147,12 +140,12 @@ class MappingArea {
 
     return {
       begin: {
-        x: tilePoint.x - this.halfAreaSize,
-        y: tilePoint.y - this.halfAreaSize
+        x: tilePoint.x - this.halfAreaSizeWidth,
+        y: tilePoint.y - this.halfAreaSizeHeight
       },
       size: {
-        x: this.areaSize,
-        y: this.areaSize
+        x: this.areaSizeWidth,
+        y: this.areaSizeHeight
       },
       z: this.getZoom()
     }

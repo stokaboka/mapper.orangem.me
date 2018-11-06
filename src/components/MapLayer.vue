@@ -47,7 +47,7 @@ export default {
 
   methods: {
     initTiles: function () {
-      const mappingArea = new MappingArea()
+      const mappingArea = new MappingArea(this.mWidthTiles, this.mHeightTiles)
 
       let grid = mappingArea
         .setZoom(this.mZoom)
