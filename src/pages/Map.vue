@@ -43,8 +43,8 @@ export default {
   computed: {
     layersStyle () {
       return {
-        'left': `${this.layersLeft}`,
-        'top': `${this.layersTop}`,
+        'left': `${this.layersLeft}px`,
+        'top': `${this.layersTop}px`,
         'width': `${this.canvasSize}px`,
         'height': `${this.canvasSize}px`
       }
@@ -63,8 +63,10 @@ export default {
       this.$router.push({name: 'map', params: newRoute})
     },
 
-    onTouchPan (obj) {
-      console.log(obj)
+    onTouchPan (event) {
+      console.log(event)
+      this.layersLeft += event.delta.x
+      this.layersTop += event.delta.y
     }
 
   },
