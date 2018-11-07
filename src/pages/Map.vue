@@ -8,12 +8,9 @@
     >
 
       <map-layer
-        :m-width-tiles="tilesByX"
-        :m-height-tiles="tilesByY"
-        :m-zoom="zoom"
-        :m-geo-point="geoPoint"
-      >
-      </map-layer>
+        ref="map"
+        @load-tiles-started="onLoadTilesStarted()"
+      ></map-layer>
 
     </div>
 
@@ -36,8 +33,16 @@ export default {
       tilesByY: 6,
 
       layersTop: 0,
-      layersLeft: 0
+      layersLeft: 0,
+
+      startDragPosition: {left: 0, top: 0},
+
+      startDragLayersPosition: {left: 0, top: 0}
     }
+  },
+
+  created () {
+    this.debouncedChangePosition = this.$lodash.debounce(this.onChangeLayersPosition, 500)
   },
 
   computed: {
@@ -53,30 +58,75 @@ export default {
 
   methods: {
 
-    setRoute (geoPoint, zoom) {
-      let newRoute = Object.assign(
-        {},
-        this.$route.params,
-        geoPoint,
-        {zoom}
-      )
-      this.$router.push({name: 'map', params: newRoute})
+    onLoadTilesStarted () {
+      this.layersLeft = 0
+      this.layersTop = 0
     },
 
+    dragLayers (delta) {
+      this.layersLeft += delta.x
+      this.layersTop += delta.y
+    },
+
+    onChangeLayersPosition (position) {
+      // const pos = {
+      //   top: position.top + this.layersTop,
+      //   left: position.left + this.layersLeft
+      // }
+
+      this.$refs.map.onChangePosition(position)
+    },
+
+    /**
+     * TODO
+     * - - сохранить положение слоя при старте Pan
+     * - по окончании вычислить дельту между началом и концом Pan
+     * - пересчитьа дельту в гео координаты
+     * - прибавть/вычесть гео-дельту из текущей гео-точки
+     */
+
     onTouchPan (event) {
-      console.log(event)
-      this.layersLeft += event.delta.x
-      this.layersTop += event.delta.y
+      this.dragLayers(event.delta)
+
+      if (event.isFirst) {
+        this.startDragLayersPosition = {
+          left: this.layersLeft,
+          top: this.layersTop
+        }
+
+        // this.startDragPosition = {
+        //   left: event.evt.offsetY,
+        //   top: event.evt.offsetY
+        // }
+        //
+        // this.startDragPosition = event.position
+      }
+
+      if (event.isFinal) {
+        const deltaPos = {
+          left: this.layersLeft - this.startDragLayersPosition.left,
+          top: this.layersTop - this.startDragLayersPosition.top
+        }
+
+        // this.startDragLayersPosition = {
+        //   left: this.layersLeft,
+        //   top: this.layersTop
+        // }
+
+        this.debouncedChangePosition(deltaPos)
+
+        // this.debouncedChangePosition(event.position)
+        // this.debouncedChangePosition(this.startDragPosition)
+      }
     }
 
   },
 
   watch: {
     '$route' (to, from) {
-      console.log('Map')
-      console.log(from)
-      console.log(to)
-      // this.initTiles()
+      // console.log('Map')
+      // console.log(from)
+      // console.log(to)
     }
   }
 

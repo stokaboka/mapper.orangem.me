@@ -41,7 +41,7 @@ class MappingArea {
           }
         })
         .then((results) => {
-          console.log(results)
+          // console.log('Tiles loader started')
         })
         .catch((error) => {
           console.log(error)

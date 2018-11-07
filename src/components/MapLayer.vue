@@ -14,61 +14,151 @@ import MappingArea from '../lib/mapper/MappingArea'
 export default {
   name: 'MapLayer',
 
-  props: {
-
-    // mTilesUrl: { type: String, required: true },
-
-    mWidthTiles: { type: Number, required: true },
-    mHeightTiles: { type: Number, required: true },
-
-    mZoom: { type: Number, required: true },
-    mGeoPoint: { type: Object, required: true }
-
-  },
-
   data () {
     return {
-      tilesUrl: 'http://localhost:3000/images'
+      tilesUrl: 'http://localhost:3000/images',
+      zoom: 12,
+      geoPoint: { lon: 39.849086, lat: 57.303309 },
+      widthTiles: 6,
+      heightTiles: 6,
+      grid: null,
+      status: {
+        ready: false,
+        loading: false,
+        complete: false,
+        errors: 0
+      },
+      counter: {
+        images: 0,
+        complete: 0,
+        errors: 0
+      }
     }
   },
 
   mounted () {
-    this.initTiles()
+    this.mappingArea = new MappingArea(this.widthTiles, this.heightTiles)
+
+    if (this.$route.params.lon && this.$route.params.lat) {
+      this.geoPoint = { lon: this.$route.params.lon, lat: this.$route.params.lat }
+    }
+
+    if (this.$route.params.zoom) {
+      this.zoom = this.$route.params.zoom
+    }
+
+    this.initTiles(true)
   },
 
   computed: {
     canvasWidth () {
-      return this.mWidthTiles * 256
+      return this.widthTiles * 256
     },
     canvasHeight () {
-      return this.mHeightTiles * 256
+      return this.heightTiles * 256
     }
   },
 
   methods: {
-    initTiles: function () {
-      const mappingArea = new MappingArea(this.mWidthTiles, this.mHeightTiles)
 
-      let grid = mappingArea
-        .setZoom(this.mZoom)
-        .setGeoPoint(this.mGeoPoint)
+    onImageLoadedFinish () {
+      if (this.counter.complete + this.counter.errors === this.counter.images) {
+        if (this.counter.errors > 0) {
+          console.log('onImageLoadedFinish: restart load on errors...' + this.counter.errors)
+          setTimeout(() => {
+            this.initTiles(false)
+          }, 1000)
+        } else {
+          console.log('onImageLoadedFinish: load complete...')
+        }
+      }
+    },
+
+    onImageLoadedComplete () {
+      this.counter.complete++
+      this.onImageLoadedFinish()
+    },
+
+    onImageLoadedError () {
+      this.counter.errors++
+      this.onImageLoadedFinish()
+    },
+
+    setRoute () {
+      let newRoute = Object.assign(
+        {},
+        this.$route.params,
+        this.geoPoint,
+        {zoom: this.zoom}
+      )
+      this.$router.push({name: 'map', params: newRoute})
+    },
+
+    /**
+     *
+     * @param position - delta перемещения слоя
+     */
+    onChangePosition (position) {
+      // let pixelPoint = {
+      //   x: position.top + this.grid.begin.x * 256,
+      //   y: position.left + this.grid.begin.y * 256
+      // }
+
+      let pixelPointDelta = {
+        x: position.top,
+        y: position.left
+      }
+
+      let geoPointDelta = this.mappingArea.tilesCalculator
+        .pipe([
+          this.mappingArea.tilesCalculator.pixelsToMeter,
+          this.mappingArea.tilesCalculator.meterToGeo
+        ]).calc(pixelPointDelta)
+
+      this.geoPoint = {
+        lon: this.geoPoint.lon + geoPointDelta.lon,
+        lat: this.geoPoint.lat + geoPointDelta.lat
+      }
+
+      this.initTiles(true)
+    },
+
+    initTiles: function (clear) {
+      console.log(`initTiles lon=${this.geoPoint.lon} lat=${this.geoPoint.lat}`)
+
+      this.grid = this.mappingArea
+        .setZoom(this.zoom)
+        .setGeoPoint(this.geoPoint)
         .getGrid()
 
-      this.loadTiles(grid)
+      this.loadTiles(this.grid, clear)
+
+      this.setRoute()
     },
 
     getTileImageFileName: function (x, y) {
-      return `${this.tilesUrl}/${this.mZoom}/${x}-${y}.png`
+      return `${this.tilesUrl}/${this.zoom}/${x}-${y}.png`
     },
 
-    loadTiles: function (grid) {
+    loadTiles: function (grid, clear) {
       let ctx = this.$refs.canvas.getContext('2d')
+
+      if (clear) {
+        ctx.fillStyle = 'gray'
+        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
+      }
+
+      this.counter.images = grid.size.x * grid.size.y
+      this.counter.complete = 0
+      this.counter.errors = 0
 
       for (let x = 0; x < grid.size.x; x++) {
         for (let y = 0; y < grid.size.y; y++) {
           this.loadTile(ctx, grid.begin, x, y)
         }
       }
+
+      this.$emit('load-tiles-started')
     },
 
     loadTile: function (ctx, begin, x, y) {
@@ -77,10 +167,12 @@ export default {
 
       img.addEventListener('load', function (event) {
         ctx.drawImage(this, x * 256, y * 256)
+        self.onImageLoadedComplete()
       })
 
       img.addEventListener('error', function (event) {
-        console.log(self)
+        // console.log(self)
+        self.onImageLoadedError()
       })
 
       img.src = this.getTileImageFileName(begin.x + x, begin.y + y)
@@ -89,19 +181,12 @@ export default {
 
   watch: {
     '$route' (to, from) {
-      console.log('MapLayer')
-      console.log(from)
-      console.log(to)
-      this.initTiles()
-    },
-
-    'mZoom' (val, oldVal) {
-      this.initTiles()
-    },
-
-    'mGeoPoint' (val, oldVal) {
-      this.initTiles()
+      // console.log('MapLayer')
+      // console.log(from)
+      // console.log(to)
+      // this.initTiles(true)
     }
+
   }
 
 }
