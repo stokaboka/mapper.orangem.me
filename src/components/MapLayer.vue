@@ -11,6 +11,7 @@
 
 import MappingArea from '../lib/mapper/MappingArea'
 import {GeoPoint, DecartPoint} from '../lib/mapper/Mercator'
+import
 
 export default {
   name: 'MapLayer',
@@ -68,7 +69,7 @@ export default {
           console.log('onImageLoadedFinish: restart load on errors...' + this.counter.errors)
           setTimeout(() => {
             this.initTiles(false)
-          }, 1000)
+          }, 500)
         } else {
           console.log('onImageLoadedFinish: load complete...')
         }
@@ -95,16 +96,7 @@ export default {
       this.$router.push({name: 'map', params: newRoute})
     },
 
-    /**
-     *
-     * @param position - delta перемещения слоя
-     */
     onChangePosition (position) {
-      // let pixelPoint = {
-      //   x: position.top + this.grid.begin.x * 256,
-      //   y: position.left + this.grid.begin.y * 256
-      // }
-
       let pixelsPoint = this.mappingArea.tilesCalculator
         .pipe([
           this.mappingArea.tilesCalculator.geoToMeter,
@@ -113,15 +105,11 @@ export default {
 
       let newPixelPoint = new DecartPoint(pixelsPoint.x - position.left, pixelsPoint.y - position.top)
 
-      console.log(`1 geoPoint: {lon:${this.geoPoint.lon}, lat:${this.geoPoint.lat}`)
-
       this.geoPoint = this.mappingArea.tilesCalculator
         .pipe([
           this.mappingArea.tilesCalculator.pixelsToMeter,
           this.mappingArea.tilesCalculator.meterToGeo
         ]).calc(newPixelPoint)
-
-      console.log(`2 geoPoint: ${this.geoPoint}`)
 
       this.initTiles(true)
     },
@@ -174,7 +162,6 @@ export default {
       })
 
       img.addEventListener('error', function (event) {
-        // console.log(self)
         self.onImageLoadedError()
       })
 

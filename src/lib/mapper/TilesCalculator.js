@@ -44,7 +44,7 @@ class TilesCalculator {
 
     this.pipeList = []
 
-    // this.init();
+    this.calcValue = null
   }
 
   get zoom () {
@@ -154,23 +154,23 @@ class TilesCalculator {
     )
   }
 
-  pipe (pList) {
-    this.pipeList = pList
-    return this
-  }
+  // pipe (pList) {
+  //   this.pipeList = pList
+  //   return this
+  // }
 
-  calc (value) {
-    if (this.pipeList) {
-      let out = value
-      for (const func of this.pipeList) {
-        out = func.call(this, out)
-      }
-      this.pipeList = []
-      return out
-    } else {
-      return value
-    }
-  }
+  // calc (value) {
+  //   if (this.pipeList) {
+  //     this.calcValue = value
+  //     for (const func of this.pipeList) {
+  //       this.calcValue = func.call(this, this.calcValue)
+  //     }
+  //     this.pipeList = []
+  //     return this.calcValue
+  //   } else {
+  //     return value
+  //   }
+  // }
 }
 
 // module.exports = TilesCalculator
