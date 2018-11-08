@@ -5,6 +5,8 @@
 // const TilesCalculator = require('./TilesCalculator')
 
 import TilesCalculator from './TilesCalculator'
+import Piper from '../Piper'
+
 import axios from 'axios'
 
 class MappingArea {
@@ -21,6 +23,8 @@ class MappingArea {
 
     this.point = null
     this.typePoint = null
+
+    this.piper = new Piper()
   }
 
   getZoom () {
@@ -76,58 +80,123 @@ class MappingArea {
   getGrid () {
     let tilePoint = null
     let geoPoint = null
+
+    this.piper.context(this.tilesCalculator)
+
     switch (this.typePoint) {
       case 'GEO':
 
         geoPoint = this.point
 
-        tilePoint = this.tilesCalculator
+        // tilePoint = this.tilesCalculator
+        //   .pipe([
+        //     this.tilesCalculator.geoToMeter,
+        //     this.tilesCalculator.meterToPixels,
+        //     this.tilesCalculator.pixelToTile
+        //   ])
+        //   .calc(this.point)
+
+        tilePoint = this.piper
+          .clear()
+          .value(this.point)
           .pipe([
             this.tilesCalculator.geoToMeter,
             this.tilesCalculator.meterToPixels,
             this.tilesCalculator.pixelToTile
           ])
-          .calc(this.point)
+          .calc()
+          .value()
+
         break
 
       case 'METER':
 
-        geoPoint = this.tilesCalculator
+        geoPoint = this.piper
+          .clear()
+          .value(this.point)
           .pipe([
             this.tilesCalculator.meterToGeo
-          ]).calc(this.point)
+          ])
+          .calc()
+          .value()
 
-        tilePoint = this.tilesCalculator
+        tilePoint = this.piper
+          .clear()
+          .value(this.point)
           .pipe([
             this.tilesCalculator.meterToPixels,
             this.tilesCalculator.pixelToTile
           ])
-          .calc(this.point)
+          .calc()
+          .value()
+
+        // geoPoint = this.tilesCalculator
+          // .pipe([
+          //   this.tilesCalculator.meterToGeo
+          // ]).calc(this.point)
+
+        // tilePoint = this.tilesCalculator
+        //   .pipe([
+        //     this.tilesCalculator.meterToPixels,
+        //     this.tilesCalculator.pixelToTile
+        //   ])
+        //   .calc(this.point)
         break
 
       case 'PIXEL':
 
-        geoPoint = this.tilesCalculator
+        geoPoint = this.piper
+          .clear()
+          .value(this.point)
           .pipe([
             this.tilesCalculator.pixelsToMeter,
             this.tilesCalculator.meterToGeo
-          ]).calc(this.point)
+          ])
+          .calc()
+          .value()
 
-        tilePoint = this.tilesCalculator
+        tilePoint = this.piper
+          .clear()
+          .value(this.point)
           .pipe([
             this.tilesCalculator.pixelToTile
           ])
-          .calc(this.point)
+          .calc()
+          .value()
+
+          // geoPoint = this.tilesCalculator
+          // .pipe([
+          //   this.tilesCalculator.pixelsToMeter,
+          //   this.tilesCalculator.meterToGeo
+          // ])
+          // .calc(this.point)
+
+        // tilePoint = this.tilesCalculator
+        //   .pipe([
+        //     this.tilesCalculator.pixelToTile
+        //   ])
+        //   .calc(this.point)
         break
 
       case 'TILE':
 
-        geoPoint = this.tilesCalculator
+        geoPoint = this.piper
+          .clear()
+          .value(this.point)
           .pipe([
             this.tilesCalculator.tileToPixels,
             this.tilesCalculator.pixelsToMeter,
             this.tilesCalculator.meterToGeo
-          ]).calc(this.point)
+          ])
+          .calc()
+          .value()
+
+        // geoPoint = this.tilesCalculator
+        //   .pipe([
+        //     this.tilesCalculator.tileToPixels,
+        //     this.tilesCalculator.pixelsToMeter,
+        //     this.tilesCalculator.meterToGeo
+        //   ]).calc(this.point)
 
         tilePoint = this.point
         break

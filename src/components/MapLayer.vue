@@ -10,8 +10,8 @@
 <script>
 
 import MappingArea from '../lib/mapper/MappingArea'
-import {GeoPoint, DecartPoint} from '../lib/mapper/Mercator'
-import
+import {GeoPoint} from '../lib/mapper/Mercator'
+import Piper from '../lib/Piper'
 
 export default {
   name: 'MapLayer',
@@ -97,19 +97,46 @@ export default {
     },
 
     onChangePosition (position) {
-      let pixelsPoint = this.mappingArea.tilesCalculator
+      const piper = new Piper()
+
+      this.geoPoint = piper
+        .context(this.mappingArea.tilesCalculator)
+        .value(this.geoPoint)
         .pipe([
           this.mappingArea.tilesCalculator.geoToMeter,
           this.mappingArea.tilesCalculator.meterToPixels
-        ]).calc(this.geoPoint)
-
-      let newPixelPoint = new DecartPoint(pixelsPoint.x - position.left, pixelsPoint.y - position.top)
-
-      this.geoPoint = this.mappingArea.tilesCalculator
+        ])
+        .calc()
+        .minus(position.left, 'x')
+        .minus(position.top, 'y')
         .pipe([
           this.mappingArea.tilesCalculator.pixelsToMeter,
           this.mappingArea.tilesCalculator.meterToGeo
-        ]).calc(newPixelPoint)
+        ])
+        .calc()
+        .value()
+
+        // let pixelsPoint = this.mappingArea.tilesCalculator
+        // .pipe([
+        //   this.mappingArea.tilesCalculator.geoToMeter,
+        //   this.mappingArea.tilesCalculator.meterToPixels
+        // ]).calc(this.geoPoint)
+
+      // let newPixelPoint = new DecartPoint(pixelsPoint.x - position.left, pixelsPoint.y - position.top)
+      //
+      // this.geoPoint = piper
+      //   .pipe([
+      //     this.mappingArea.tilesCalculator.pixelsToMeter,
+      //     this.mappingArea.tilesCalculator.meterToGeo
+      //   ])
+      //   .calc(newPixelPoint)
+      //   .value()
+
+        // this.geoPoint = this.mappingArea.tilesCalculator
+        // .pipe([
+        //   this.mappingArea.tilesCalculator.pixelsToMeter,
+        //   this.mappingArea.tilesCalculator.meterToGeo
+        // ]).calc(newPixelPoint)
 
       this.initTiles(true)
     },
