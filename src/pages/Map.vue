@@ -9,7 +9,9 @@
 
       <map-layer
         ref="map"
-        @load-tiles-started="onLoadTilesStarted()"
+        @load-tiles-started="onLoadTilesStarted"
+        @load-tiles-progress="onLoadTilesProgress"
+        @load-tiles-complete="onLoadTilesComplete"
       ></map-layer>
 
     </div>
@@ -19,6 +21,7 @@
 
 <script>
 
+// import { debounce } from 'quasar'
 import MapLayer from '../components/MapLayer'
 
 export default {
@@ -42,7 +45,7 @@ export default {
   },
 
   created () {
-    this.debouncedChangePosition = this.$lodash.debounce(this.onChangeLayersPosition, 500)
+    // this.debouncedChangePosition = this.$lodash.debounce(this.onChangeLayersPosition, 500)
   },
 
   computed: {
@@ -61,6 +64,18 @@ export default {
     onLoadTilesStarted () {
       this.layersLeft = 0
       this.layersTop = 0
+      this.$q.loadingBar.start()
+    },
+
+    onLoadTilesProgress (counter) {
+      if (counter.images > 0) {
+        const value = 100 * counter.complete / counter.images
+        this.$q.loadingBar.increment(value)
+      }
+    },
+
+    onLoadTilesComplete () {
+      this.$q.loadingBar.stop()
     },
 
     dragLayers (delta) {
@@ -69,11 +84,6 @@ export default {
     },
 
     onChangeLayersPosition (position) {
-      // const pos = {
-      //   top: position.top + this.layersTop,
-      //   left: position.left + this.layersLeft
-      // }
-
       this.$refs.map.onChangePosition(position)
     },
 
@@ -93,30 +103,16 @@ export default {
           left: this.layersLeft,
           top: this.layersTop
         }
-
-        // this.startDragPosition = {
-        //   left: event.evt.offsetY,
-        //   top: event.evt.offsetY
-        // }
-        //
-        // this.startDragPosition = event.position
       }
 
       if (event.isFinal) {
         const deltaPos = {
-          left: this.layersLeft - this.startDragLayersPosition.left,
-          top: this.layersTop - this.startDragLayersPosition.top
+          x: this.layersLeft - this.startDragLayersPosition.left,
+          y: this.layersTop - this.startDragLayersPosition.top
         }
 
-        // this.startDragLayersPosition = {
-        //   left: this.layersLeft,
-        //   top: this.layersTop
-        // }
-
-        this.debouncedChangePosition(deltaPos)
-
-        // this.debouncedChangePosition(event.position)
-        // this.debouncedChangePosition(this.startDragPosition)
+        this.onChangeLayersPosition(deltaPos)
+        // this.debouncedChangePosition(deltaPos)
       }
     }
 

@@ -72,7 +72,10 @@ export default {
           }, 500)
         } else {
           console.log('onImageLoadedFinish: load complete...')
+          this.$emit('load-tiles-complete')
         }
+      } else {
+        this.$emit('load-tiles-progress', this.counter)
       }
     },
 
@@ -107,8 +110,8 @@ export default {
           this.mappingArea.tilesCalculator.meterToPixels
         ])
         .calc()
-        .minus(position.left, 'x')
-        .minus(position.top, 'y')
+        .minus(position.x, 'x')
+        .minus(position.y, 'y')
         .pipe([
           this.mappingArea.tilesCalculator.pixelsToMeter,
           this.mappingArea.tilesCalculator.meterToGeo
@@ -116,29 +119,7 @@ export default {
         .calc()
         .value()
 
-        // let pixelsPoint = this.mappingArea.tilesCalculator
-        // .pipe([
-        //   this.mappingArea.tilesCalculator.geoToMeter,
-        //   this.mappingArea.tilesCalculator.meterToPixels
-        // ]).calc(this.geoPoint)
-
-      // let newPixelPoint = new DecartPoint(pixelsPoint.x - position.left, pixelsPoint.y - position.top)
-      //
-      // this.geoPoint = piper
-      //   .pipe([
-      //     this.mappingArea.tilesCalculator.pixelsToMeter,
-      //     this.mappingArea.tilesCalculator.meterToGeo
-      //   ])
-      //   .calc(newPixelPoint)
-      //   .value()
-
-        // this.geoPoint = this.mappingArea.tilesCalculator
-        // .pipe([
-        //   this.mappingArea.tilesCalculator.pixelsToMeter,
-        //   this.mappingArea.tilesCalculator.meterToGeo
-        // ]).calc(newPixelPoint)
-
-      this.initTiles(true)
+      this.initTiles(false)
     },
 
     initTiles: function (clear) {

@@ -5,8 +5,7 @@ module.exports = function (ctx) {
     // app plugins (/src/plugins)
     plugins: [
       'i18n',
-      'axios',
-      'lodash'
+      'axios'
     ],
     css: [
       'app.styl'
@@ -68,8 +67,20 @@ module.exports = function (ctx) {
       ],
       // Quasar plugins
       plugins: [
-        'Notify'
-      ]
+        'Notify',
+        'LoadingBar'
+      ],
+
+      config: {
+        loadingBar: {
+          position: 'bottom',
+          size: '6px',
+          color: 'red',
+          // false for catch aiax events
+          'skip-hijack': true
+          // QAjaxBar properties
+        }
+      }
       // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
       // i18n: 'de' // Quasar language
     },
