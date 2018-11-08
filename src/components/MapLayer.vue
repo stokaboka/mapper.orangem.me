@@ -10,6 +10,7 @@
 <script>
 
 import MappingArea from '../lib/mapper/MappingArea'
+import {GeoPoint, DecartPoint} from '../lib/mapper/Mercator'
 
 export default {
   name: 'MapLayer',
@@ -18,7 +19,7 @@ export default {
     return {
       tilesUrl: 'http://localhost:3000/images',
       zoom: 12,
-      geoPoint: { lon: 39.849086, lat: 57.303309 },
+      geoPoint: new GeoPoint(39.849086, 57.303309),
       widthTiles: 6,
       heightTiles: 6,
       grid: null,
@@ -104,21 +105,23 @@ export default {
       //   y: position.left + this.grid.begin.y * 256
       // }
 
-      let pixelPointDelta = {
-        x: position.top,
-        y: position.left
-      }
+      let pixelsPoint = this.mappingArea.tilesCalculator
+        .pipe([
+          this.mappingArea.tilesCalculator.geoToMeter,
+          this.mappingArea.tilesCalculator.meterToPixels
+        ]).calc(this.geoPoint)
 
-      let geoPointDelta = this.mappingArea.tilesCalculator
+      let newPixelPoint = new DecartPoint(pixelsPoint.x - position.left, pixelsPoint.y - position.top)
+
+      console.log(`1 geoPoint: {lon:${this.geoPoint.lon}, lat:${this.geoPoint.lat}`)
+
+      this.geoPoint = this.mappingArea.tilesCalculator
         .pipe([
           this.mappingArea.tilesCalculator.pixelsToMeter,
           this.mappingArea.tilesCalculator.meterToGeo
-        ]).calc(pixelPointDelta)
+        ]).calc(newPixelPoint)
 
-      this.geoPoint = {
-        lon: this.geoPoint.lon + geoPointDelta.lon,
-        lat: this.geoPoint.lat + geoPointDelta.lat
-      }
+      console.log(`2 geoPoint: ${this.geoPoint}`)
 
       this.initTiles(true)
     },
