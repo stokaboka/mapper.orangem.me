@@ -63,30 +63,32 @@ export default {
 
   methods: {
 
-    onImageLoadedFinish () {
+    onImageLoadedFinish (sendProgress) {
       if (this.counter.complete + this.counter.errors === this.counter.images) {
         if (this.counter.errors > 0) {
-          console.log('onImageLoadedFinish: restart load on errors...' + this.counter.errors)
+          // console.log('onImageLoadedFinish: restart load on errors...' + this.counter.errors)
           setTimeout(() => {
             this.initTiles(false)
           }, 500)
         } else {
-          console.log('onImageLoadedFinish: load complete...')
+          // console.log('onImageLoadedFinish: load complete...')
           this.$emit('load-tiles-complete')
         }
       } else {
-        this.$emit('load-tiles-progress', this.counter)
+        if (sendProgress) {
+          this.$emit('load-tiles-progress', this.counter)
+        }
       }
     },
 
     onImageLoadedComplete () {
       this.counter.complete++
-      this.onImageLoadedFinish()
+      this.onImageLoadedFinish(true)
     },
 
     onImageLoadedError () {
       this.counter.errors++
-      this.onImageLoadedFinish()
+      this.onImageLoadedFinish(false)
     },
 
     setRoute () {

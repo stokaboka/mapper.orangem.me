@@ -48,6 +48,7 @@ module.exports = function (ctx) {
         'QLayoutFooter',
         'QPageContainer',
         'QPage',
+        'QProgress',
         'QToolbar',
         'QToolbarTitle',
         'QTabs',
@@ -67,19 +68,19 @@ module.exports = function (ctx) {
       ],
       // Quasar plugins
       plugins: [
-        'Notify',
-        'LoadingBar'
+        'Notify'
+        // 'LoadingBar'
       ],
 
       config: {
-        loadingBar: {
-          position: 'bottom',
-          size: '6px',
-          color: 'red',
-          // false for catch aiax events
-          'skip-hijack': true
-          // QAjaxBar properties
-        }
+        // loadingBar: {
+        //   position: 'bottom',
+        //   size: '6px',
+        //   color: 'red',
+        //   // false for catch aiax events
+        //   'skip-hijack': true
+        //   // QAjaxBar properties
+        // }
       }
       // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
       // i18n: 'de' // Quasar language
