@@ -106,8 +106,8 @@ export default {
     },
 
     onLoadTilesStarted () {
-      this.layersPosition.left = 0
-      this.layersPosition.top = 0
+      // this.layersPosition.left = 0
+      // this.layersPosition.top = 0
       this.mapLayer.loading.progress = true
     },
 
@@ -165,6 +165,5 @@ export default {
 <style>
   .map-controls-position__right-center {
     right: 0;
-    margin: auto 0 auto 0;
   }
 </style>
