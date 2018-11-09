@@ -101,7 +101,14 @@ export default {
       this.$router.push({name: 'map', params: newRoute})
     },
 
-    onChangePosition (position) {
+    onZoomChange (changes) {
+      if (this.zoom > 2 && this.zoom < 19) {
+        this.zoom = this.zoom + changes
+        this.initTiles(true)
+      }
+    },
+
+    onPan (position) {
       const piper = new Piper()
 
       this.geoPoint = piper
@@ -125,7 +132,7 @@ export default {
     },
 
     initTiles: function (clear) {
-      console.log(`initTiles lon=${this.geoPoint.lon} lat=${this.geoPoint.lat}`)
+      // console.log(`initTiles lon=${this.geoPoint.lon} lat=${this.geoPoint.lat}`)
 
       this.grid = this.mappingArea
         .setZoom(this.zoom)

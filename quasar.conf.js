@@ -49,10 +49,11 @@ module.exports = function (ctx) {
         'QPageContainer',
         'QPage',
         'QProgress',
+        'QRouteTab',
+        'QResizeObservable',
         'QToolbar',
         'QToolbarTitle',
         'QTabs',
-        'QRouteTab',
         'QTab',
         'QBtn',
         'QIcon',
@@ -60,7 +61,8 @@ module.exports = function (ctx) {
         'QListHeader',
         'QItem',
         'QItemMain',
-        'QItemSide'
+        'QItemSide',
+        'QWindowResizeObservable'
       ],
       directives: [
         'Ripple',

@@ -1,6 +1,8 @@
 <template>
   <q-page ref="page">
 
+    <q-resize-observable @resize="onResize"></q-resize-observable>
+
     <div
       class="absolute"
       :style="layersStyle"
@@ -25,19 +27,24 @@
       stripe :buffer="mapLayer.loading.buffer" >
     </q-progress>
 
+    <map-controls
+      class="map-controls-position__right-center"
+      @increment="doIncZoom"
+      @decrement="doDecZoom"
+    >
+    </map-controls>
+
   </q-page>
 </template>
 
 <script>
 
-import { debounce, dom } from 'quasar'
 import MapLayer from '../components/MapLayer'
-
-const { height, width } = dom
+import MapControls from '../components/MapControls'
 
 export default {
   name: 'Map',
-  components: {MapLayer},
+  components: {MapControls, MapLayer},
   data () {
     return {
       zoom: 12,
@@ -66,17 +73,6 @@ export default {
     }
   },
 
-  created () {
-    window.addEventListener(
-      'resize',
-      debounce(this.positionLayersToCenter, 500)
-    )
-  },
-
-  mounted () {
-    this.positionLayersToCenter()
-  },
-
   computed: {
     layersStyle () {
       return {
@@ -88,9 +84,17 @@ export default {
 
   methods: {
 
-    positionLayersToCenter () {
-      const pageHeight = height(this.$refs.page.$el)
-      const pageWidth = width(this.$refs.page.$el)
+    doIncZoom () {
+      this.$refs.map.onZoomChange(1)
+    },
+
+    doDecZoom () {
+      this.$refs.map.onZoomChange(-1)
+    },
+
+    positionLayersToCenter (pageSize) {
+      const pageHeight = pageSize ? pageSize.height : this.$refs.page.$el.offsetHeight
+      const pageWidth = pageSize ? pageSize.width : this.$refs.page.$el.offsetWidth
 
       const canvasWidth = this.$refs.map.canvasWidth
       const canvasHeight = this.$refs.map.canvasHeight
@@ -125,7 +129,7 @@ export default {
     },
 
     onChangeLayersPosition (position) {
-      this.$refs.map.onChangePosition(position)
+      this.$refs.map.onPan(position)
     },
 
     onTouchPan (event) {
@@ -146,6 +150,11 @@ export default {
 
         this.onChangeLayersPosition(deltaPos)
       }
+    },
+
+    onResize (size) {
+      console.log(size)
+      this.positionLayersToCenter(size)
     }
 
   }
@@ -154,4 +163,8 @@ export default {
 </script>
 
 <style>
+  .map-controls-position__right-center {
+    right: 0;
+    margin: auto 0 auto 0;
+  }
 </style>
