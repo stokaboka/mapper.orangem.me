@@ -29,6 +29,8 @@
 
     <map-controls
       class="map-controls-position__right-center"
+      :inc-disable="mapControlsIncDisable"
+      :dec-disable="mapControlsDecDisable"
       @increment="doIncZoom"
       @decrement="doDecZoom"
     >
@@ -85,11 +87,11 @@ export default {
   methods: {
 
     doIncZoom () {
-      this.$refs.map.onZoomChange(1)
+      this.mapControlsIncDisable = this.$refs.map.onZoomChange(1)
     },
 
     doDecZoom () {
-      this.$refs.map.onZoomChange(-1)
+      this.mapControlsDecDisable = this.$refs.map.onZoomChange(-1)
     },
 
     positionLayersToCenter (pageSize) {
@@ -164,6 +166,9 @@ export default {
 
 <style>
   .map-controls-position__right-center {
-    right: 0;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 </style>

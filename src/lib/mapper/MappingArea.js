@@ -24,6 +24,11 @@ class MappingArea {
     this.point = null
     this.typePoint = null
 
+    this.minZoom = 2
+    this.maxZoom = 19
+
+    this.tilesUrl = 'http://localhost:3000/images'
+
     this.piper = new Piper()
   }
 
@@ -218,6 +223,10 @@ class MappingArea {
       },
       z: this.getZoom()
     }
+  }
+
+  getTileImageFileName (x, y) {
+    return `${this.tilesUrl}/${this.tilesCalculator.zoom}/${x}-${y}.png`
   }
 }
 

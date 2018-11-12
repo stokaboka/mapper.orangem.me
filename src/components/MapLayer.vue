@@ -66,12 +66,10 @@ export default {
     onImageLoadedFinish (sendProgress) {
       if (this.counter.complete + this.counter.errors === this.counter.images) {
         if (this.counter.errors > 0) {
-          // console.log('onImageLoadedFinish: restart load on errors...' + this.counter.errors)
           setTimeout(() => {
             this.initTiles(false)
           }, 500)
         } else {
-          // console.log('onImageLoadedFinish: load complete...')
           this.$emit('load-tiles-complete')
         }
       } else {
@@ -96,15 +94,23 @@ export default {
         {},
         this.$route.params,
         this.geoPoint,
-        {zoom: this.zoom}
+        {zoom: this.mappingArea.getZoom()}
       )
       this.$router.push({name: 'map', params: newRoute})
     },
 
+    /**
+     * map zoom change
+     * @param changes
+     * @returns {boolean}
+     */
     onZoomChange (changes) {
-      if (this.zoom > 2 && this.zoom < 19) {
+      if (this.zoom > this.mappingArea.minZoom && this.zoom < this.mappingArea.maxZoom) {
         this.zoom = this.zoom + changes
         this.initTiles(true)
+        return false
+      } else {
+        return true
       }
     },
 
@@ -144,9 +150,9 @@ export default {
       this.setRoute()
     },
 
-    getTileImageFileName: function (x, y) {
-      return `${this.tilesUrl}/${this.zoom}/${x}-${y}.png`
-    },
+    // getTileImageFileName: function (x, y) {
+    //   return `${this.tilesUrl}/${this.zoom}/${x}-${y}.png`
+    // },
 
     loadTiles: function (grid, clear) {
       let ctx = this.$refs.canvas.getContext('2d')
@@ -182,7 +188,7 @@ export default {
         self.onImageLoadedError()
       })
 
-      img.src = this.getTileImageFileName(begin.x + x, begin.y + y)
+      img.src = this.mappingArea.getTileImageFileName(begin.x + x, begin.y + y)
     }
   },
 
