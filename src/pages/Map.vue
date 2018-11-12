@@ -16,6 +16,8 @@
         @load-tiles-complete="onLoadTilesComplete"
       ></map-layer>
 
+      <canvas width="1000" height="1000"></canvas>
+
     </div>
 
     <q-progress
@@ -41,8 +43,12 @@
 
 <script>
 
+import {createNamespacedHelpers} from 'vuex'
+
 import MapLayer from '../components/MapLayer'
 import MapControls from '../components/MapControls'
+
+const { mapState, mapActions } = createNamespacedHelpers('network')
 
 export default {
   name: 'Map',
@@ -88,7 +94,13 @@ export default {
         'left': `${this.layersPosition.left}px`,
         'top': `${this.layersPosition.top}px`
       }
-    }
+    },
+
+    ...mapState(['layers'])
+  },
+
+  mounted () {
+    this.generateObjects()
   },
 
   methods: {
@@ -163,8 +175,9 @@ export default {
 
     onResize (size) {
       this.positionLayersToCenter(size)
-    }
+    },
 
+    ...mapActions([ 'createLayer', 'generateObjects' ])
   }
 
 }
