@@ -100,6 +100,19 @@ class MappingArea {
     return this
   }
 
+  geoPointToPixelsPoint (geoPoint) {
+    let tt = this.piper
+      .clear()
+      .value(geoPoint)
+      .pipe([
+        this.tilesCalculator.geoToMeter,
+        this.tilesCalculator.meterToPixels
+      ])
+      .calc()
+      .value()
+    return tt
+  }
+
   getGrid () {
     let tilePoint = null
     let geoPoint = null

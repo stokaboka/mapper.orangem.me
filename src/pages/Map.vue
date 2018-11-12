@@ -11,12 +11,17 @@
 
       <map-layer
         ref="map"
+        id="MAP"
         @load-tiles-started="onLoadTilesStarted"
         @load-tiles-progress="onLoadTilesProgress"
         @load-tiles-complete="onLoadTilesComplete"
       ></map-layer>
 
-      <canvas width="1000" height="1000"></canvas>
+      <objects-layer
+        v-for="layer in layers"
+        :key="layer.id"
+        v-bind="layer">
+      </objects-layer>
 
     </div>
 
@@ -47,12 +52,13 @@ import {createNamespacedHelpers} from 'vuex'
 
 import MapLayer from '../components/MapLayer'
 import MapControls from '../components/MapControls'
+import ObjectsLayer from '../components/ObjectsLayer'
 
 const { mapState, mapActions } = createNamespacedHelpers('network')
 
 export default {
   name: 'Map',
-  components: {MapControls, MapLayer},
+  components: {ObjectsLayer, MapControls, MapLayer},
   data () {
     return {
 

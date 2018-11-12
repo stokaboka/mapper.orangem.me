@@ -27,8 +27,9 @@ const getRandomTypeObject = (n) => {
   return Math.round(Math.random() * n, 0)
 }
 
-const createObject = () => {
+const createObject = (id) => {
   const out = {
+    id: id,
     type: getRandomTypeObject(4),
     points: null
   }
@@ -53,14 +54,19 @@ const generateObjects = ({ getters, commit }) => {
   let layers = new Array(getters.numLayers)
 
   for (let l = 0; l < getters.numLayers; l++) {
-    let layer = new Array(getters.numObjectsPerLayer)
+    let objects = new Array(getters.numObjectsPerLayer)
 
     for (let o = 0; o < getters.numObjectsPerLayer; o++) {
-      let obj = createObject()
-      layer[o] = obj
+      let object = createObject(`${l}-${o}`)
+      objects[o] = object
     }
 
-    layers[l] = layer
+    layers[l] = {
+      id: `${l}`,
+      title: `Title ${l}`,
+      description: `Description ${l}`,
+      objects
+    }
   }
 
   commit('setLayers', layers)

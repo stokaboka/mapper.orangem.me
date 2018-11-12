@@ -9,12 +9,12 @@
 
 <script>
 
-import MappingArea from '../lib/mapper/MappingArea'
+// import MappingArea from '../lib/mapper/MappingArea'
 import {GeoPoint} from '../lib/mapper/Mercator'
-
-const mappingArea = new MappingArea()
-  .setGeoPoint(new GeoPoint(39.849086, 57.303309))
-  .setZoom(12)
+//
+// const mappingArea = new MappingArea()
+//   .setGeoPoint(new GeoPoint(39.849086, 57.303309))
+//   .setZoom(12)
 
 export default {
   name: 'MapLayer',
@@ -22,8 +22,8 @@ export default {
   data () {
     return {
 
-      canvasWidth: mappingArea.areaSizeWidth * 256,
-      canvasHeight: mappingArea.areaSizeHeight * 256,
+      canvasWidth: this.$mapping.areaSizeWidth * 256,
+      canvasHeight: this.$mapping.areaSizeHeight * 256,
 
       widthTiles: 6,
       heightTiles: 6,
@@ -56,7 +56,7 @@ export default {
 
     initRouterParams () {
       if (this.$route.params.lon && this.$route.params.lat) {
-        mappingArea.setGeoPoint(new GeoPoint(
+        this.$mapping.setGeoPoint(new GeoPoint(
           parseFloat(this.$route.params.lon),
           parseFloat(this.$route.params.lat)
         )
@@ -64,7 +64,7 @@ export default {
       }
 
       if (this.$route.params.zoom) {
-        mappingArea.setZoom(parseInt(this.$route.params.zoom))
+        this.$mapping.setZoom(parseInt(this.$route.params.zoom))
       }
     },
 
@@ -99,24 +99,24 @@ export default {
         {},
         this.$route.params,
         this.geoPoint,
-        {zoom: mappingArea.getZoom()}
+        {zoom: this.$mapping.getZoom()}
       )
       this.$router.push({name: 'map', params: newRoute})
     },
 
     onZoomChange (changes) {
-      mappingArea.changeZoom(changes)
+      this.$mapping.changeZoom(changes)
       this.initTiles(false)
-      return mappingArea.getMapControlsInfo()
+      return this.$mapping.getMapControlsInfo()
     },
 
     onPan (position) {
-      mappingArea.onPan(position)
+      this.$mapping.onPan(position)
       this.initTiles(false)
     },
 
     initTiles: function (clear) {
-      this.grid = mappingArea.getGrid()
+      this.grid = this.$mapping.getGrid()
       this.loadTiles(this.grid, clear)
       this.setRoute()
     },
@@ -155,7 +155,7 @@ export default {
         self.onImageLoadedError()
       })
 
-      img.src = mappingArea.getTileImageFileName(begin.x + x, begin.y + y)
+      img.src = this.$mapping.getTileImageFileName(begin.x + x, begin.y + y)
     }
   },
 
