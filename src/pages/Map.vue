@@ -29,8 +29,8 @@
 
     <map-controls
       class="map-controls-position__right-center"
-      :inc-disable="mapControlsIncDisable"
-      :dec-disable="mapControlsDecDisable"
+      :inc-disable="mapControls.incDisable"
+      :dec-disable="mapControls.decDisable"
       @increment="doIncZoom"
       @decrement="doDecZoom"
     >
@@ -49,6 +49,13 @@ export default {
   components: {MapControls, MapLayer},
   data () {
     return {
+
+      mapControls: {
+        zoom: 12,
+        incDisable: false,
+        decDisable: false
+      },
+
       zoom: 12,
       geoPoint: {
         lon: 39.849086,
@@ -87,11 +94,11 @@ export default {
   methods: {
 
     doIncZoom () {
-      this.mapControlsIncDisable = this.$refs.map.onZoomChange(1)
+      this.mapControls = this.$refs.map.onZoomChange(1)
     },
 
     doDecZoom () {
-      this.mapControlsDecDisable = this.$refs.map.onZoomChange(-1)
+      this.mapControls = this.$refs.map.onZoomChange(-1)
     },
 
     positionLayersToCenter (pageSize) {
@@ -155,7 +162,6 @@ export default {
     },
 
     onResize (size) {
-      console.log(size)
       this.positionLayersToCenter(size)
     }
 

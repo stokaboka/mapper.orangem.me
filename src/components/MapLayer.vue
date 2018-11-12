@@ -11,16 +11,20 @@
 
 import MappingArea from '../lib/mapper/MappingArea'
 import {GeoPoint} from '../lib/mapper/Mercator'
-import Piper from '../lib/Piper'
+
+const mappingArea = new MappingArea()
+  .setGeoPoint(new GeoPoint(39.849086, 57.303309))
+  .setZoom(12)
 
 export default {
   name: 'MapLayer',
 
   data () {
     return {
-      tilesUrl: 'http://localhost:3000/images',
-      zoom: 12,
-      geoPoint: new GeoPoint(39.849086, 57.303309),
+
+      canvasWidth: mappingArea.areaSizeWidth * 256,
+      canvasHeight: mappingArea.areaSizeHeight * 256,
+
       widthTiles: 6,
       heightTiles: 6,
       grid: null,
@@ -38,30 +42,31 @@ export default {
     }
   },
 
+  created () {
+
+  },
+
   mounted () {
-    this.mappingArea = new MappingArea(this.widthTiles, this.heightTiles)
-
-    if (this.$route.params.lon && this.$route.params.lat) {
-      this.geoPoint = { lon: this.$route.params.lon, lat: this.$route.params.lat }
-    }
-
-    if (this.$route.params.zoom) {
-      this.zoom = this.$route.params.zoom
-    }
+    this.initRouterParams()
 
     this.initTiles(true)
   },
 
-  computed: {
-    canvasWidth () {
-      return this.widthTiles * 256
-    },
-    canvasHeight () {
-      return this.heightTiles * 256
-    }
-  },
-
   methods: {
+
+    initRouterParams () {
+      if (this.$route.params.lon && this.$route.params.lat) {
+        mappingArea.setGeoPoint(new GeoPoint(
+          parseFloat(this.$route.params.lon),
+          parseFloat(this.$route.params.lat)
+        )
+        )
+      }
+
+      if (this.$route.params.zoom) {
+        mappingArea.setZoom(parseInt(this.$route.params.zoom))
+      }
+    },
 
     onImageLoadedFinish (sendProgress) {
       if (this.counter.complete + this.counter.errors === this.counter.images) {
@@ -94,65 +99,27 @@ export default {
         {},
         this.$route.params,
         this.geoPoint,
-        {zoom: this.mappingArea.getZoom()}
+        {zoom: mappingArea.getZoom()}
       )
       this.$router.push({name: 'map', params: newRoute})
     },
 
-    /**
-     * map zoom change
-     * @param changes
-     * @returns {boolean}
-     */
     onZoomChange (changes) {
-      if (this.zoom > this.mappingArea.minZoom && this.zoom < this.mappingArea.maxZoom) {
-        this.zoom = this.zoom + changes
-        this.initTiles(true)
-        return false
-      } else {
-        return true
-      }
+      mappingArea.changeZoom(changes)
+      this.initTiles(false)
+      return mappingArea.getMapControlsInfo()
     },
 
     onPan (position) {
-      const piper = new Piper()
-
-      this.geoPoint = piper
-        .context(this.mappingArea.tilesCalculator)
-        .value(this.geoPoint)
-        .pipe([
-          this.mappingArea.tilesCalculator.geoToMeter,
-          this.mappingArea.tilesCalculator.meterToPixels
-        ])
-        .calc()
-        .minus(position.x, 'x')
-        .minus(position.y, 'y')
-        .pipe([
-          this.mappingArea.tilesCalculator.pixelsToMeter,
-          this.mappingArea.tilesCalculator.meterToGeo
-        ])
-        .calc()
-        .value()
-
+      mappingArea.onPan(position)
       this.initTiles(false)
     },
 
     initTiles: function (clear) {
-      // console.log(`initTiles lon=${this.geoPoint.lon} lat=${this.geoPoint.lat}`)
-
-      this.grid = this.mappingArea
-        .setZoom(this.zoom)
-        .setGeoPoint(this.geoPoint)
-        .getGrid()
-
+      this.grid = mappingArea.getGrid()
       this.loadTiles(this.grid, clear)
-
       this.setRoute()
     },
-
-    // getTileImageFileName: function (x, y) {
-    //   return `${this.tilesUrl}/${this.zoom}/${x}-${y}.png`
-    // },
 
     loadTiles: function (grid, clear) {
       let ctx = this.$refs.canvas.getContext('2d')
@@ -188,16 +155,13 @@ export default {
         self.onImageLoadedError()
       })
 
-      img.src = this.mappingArea.getTileImageFileName(begin.x + x, begin.y + y)
+      img.src = mappingArea.getTileImageFileName(begin.x + x, begin.y + y)
     }
   },
 
   watch: {
     '$route' (to, from) {
-      // console.log('MapLayer')
-      // console.log(from)
-      // console.log(to)
-      // this.initTiles(true)
+      this.initRouterParams()
     }
 
   }

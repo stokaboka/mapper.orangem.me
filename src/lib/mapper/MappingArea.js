@@ -10,9 +10,11 @@ import Piper from '../Piper'
 import axios from 'axios'
 
 class MappingArea {
-  constructor (pAreaSizeWidth, pAreaSizeHeight) {
-    this.areaSizeWidth = pAreaSizeWidth
-    this.areaSizeHeight = pAreaSizeHeight
+  constructor () {
+    this.geoPoint = null
+
+    this.areaSizeWidth = 6
+    this.areaSizeHeight = 6
 
     this.tilesLoaderUrl = 'http://localhost:3000/mapper'
 
@@ -40,6 +42,21 @@ class MappingArea {
     return this
   }
 
+  changeZoom (value) {
+    if (this.minZoom < this.getZoom() && this.getZoom() < this.maxZoom) {
+      this.setZoom(this.getZoom() + value)
+    }
+    return this
+  }
+
+  getMapControlsInfo () {
+    return {
+      zoom: this.getZoom(),
+      incDisable: this.getZoom() >= this.maxZoom,
+      decDisable: this.getZoom() <= this.minZoom
+    }
+  }
+
   doLoadTiles (geoPoint, reload) {
     if (geoPoint) {
       const url = `${this.tilesLoaderUrl}/lon/${geoPoint.lon}/lat/${geoPoint.lat}/zoom/${this.getZoom()}/reload/${reload}`
@@ -60,6 +77,7 @@ class MappingArea {
 
   setGeoPoint (point) {
     this.point = point
+    this.geoPoint = point
     this.typePoint = 'GEO'
     return this
   }
@@ -85,6 +103,8 @@ class MappingArea {
   getGrid () {
     let tilePoint = null
     let geoPoint = null
+
+    this.setGeoPoint(this.geoPoint)
 
     this.piper.context(this.tilesCalculator)
 
@@ -223,6 +243,27 @@ class MappingArea {
       },
       z: this.getZoom()
     }
+  }
+
+  onPan (position) {
+    const piper = new Piper()
+
+    this.geoPoint = piper
+      .context(this.tilesCalculator)
+      .value(this.geoPoint)
+      .pipe([
+        this.tilesCalculator.geoToMeter,
+        this.tilesCalculator.meterToPixels
+      ])
+      .calc()
+      .minus(position.x, 'x')
+      .minus(position.y, 'y')
+      .pipe([
+        this.tilesCalculator.pixelsToMeter,
+        this.tilesCalculator.meterToGeo
+      ])
+      .calc()
+      .value()
   }
 
   getTileImageFileName (x, y) {
