@@ -8,6 +8,7 @@ import TilesCalculator from './TilesCalculator'
 import Piper from '../Piper'
 
 import axios from 'axios'
+// import {DecartPoint} from './Mercator'
 
 class MappingArea {
   constructor () {
@@ -15,6 +16,9 @@ class MappingArea {
 
     this.areaSizeWidth = 6
     this.areaSizeHeight = 6
+
+    this.beginTile = {x: 0, y: 0}
+    this.beginTilePixels = {x: 0, y: 0}
 
     this.tilesLoaderUrl = 'http://localhost:3000/mapper'
 
@@ -101,16 +105,19 @@ class MappingArea {
   }
 
   geoPointToPixelsPoint (geoPoint) {
-    let tt = this.piper
-      .clear()
-      .value(geoPoint)
-      .pipe([
-        this.tilesCalculator.geoToMeter,
-        this.tilesCalculator.meterToPixels
-      ])
-      .calc()
-      .value()
-    return tt
+    return this.tilesCalculator.meterToPixels(this.tilesCalculator.geoToMeter(geoPoint))
+  }
+
+  pixelsPointToRelativePixelsPoint (pixelsPoint) {
+    return {
+      x: pixelsPoint.x - this.beginTilePixels.x,
+      y: pixelsPoint.y - this.beginTilePixels.y
+    }
+  }
+
+  geoPointToRelativePixelsPoint (geoPoint) {
+    const pixelsPoint = this.geoPointToPixelsPoint(geoPoint)
+    return this.pixelsPointToRelativePixelsPoint(pixelsPoint)
   }
 
   getGrid () {
@@ -125,14 +132,6 @@ class MappingArea {
       case 'GEO':
 
         geoPoint = this.point
-
-        // tilePoint = this.tilesCalculator
-        //   .pipe([
-        //     this.tilesCalculator.geoToMeter,
-        //     this.tilesCalculator.meterToPixels,
-        //     this.tilesCalculator.pixelToTile
-        //   ])
-        //   .calc(this.point)
 
         tilePoint = this.piper
           .clear()
@@ -168,17 +167,6 @@ class MappingArea {
           .calc()
           .value()
 
-        // geoPoint = this.tilesCalculator
-          // .pipe([
-          //   this.tilesCalculator.meterToGeo
-          // ]).calc(this.point)
-
-        // tilePoint = this.tilesCalculator
-        //   .pipe([
-        //     this.tilesCalculator.meterToPixels,
-        //     this.tilesCalculator.pixelToTile
-        //   ])
-        //   .calc(this.point)
         break
 
       case 'PIXEL':
@@ -202,18 +190,6 @@ class MappingArea {
           .calc()
           .value()
 
-          // geoPoint = this.tilesCalculator
-          // .pipe([
-          //   this.tilesCalculator.pixelsToMeter,
-          //   this.tilesCalculator.meterToGeo
-          // ])
-          // .calc(this.point)
-
-        // tilePoint = this.tilesCalculator
-        //   .pipe([
-        //     this.tilesCalculator.pixelToTile
-        //   ])
-        //   .calc(this.point)
         break
 
       case 'TILE':
@@ -229,27 +205,28 @@ class MappingArea {
           .calc()
           .value()
 
-        // geoPoint = this.tilesCalculator
-        //   .pipe([
-        //     this.tilesCalculator.tileToPixels,
-        //     this.tilesCalculator.pixelsToMeter,
-        //     this.tilesCalculator.meterToGeo
-        //   ]).calc(this.point)
-
         tilePoint = this.point
+
         break
 
       default:
         return null
     }
 
+    this.beginTile = {
+      x: tilePoint.x - this.halfAreaSizeWidth,
+      y: tilePoint.y - this.halfAreaSizeHeight
+    }
+
+    this.beginTilePixels = this.tilesCalculator.tileToPixels(this.beginTile)
+
+    // console.log('beginTilePixels')
+    // console.log(this.beginTilePixels)
+
     this.doLoadTiles(geoPoint, 0)
 
     return {
-      begin: {
-        x: tilePoint.x - this.halfAreaSizeWidth,
-        y: tilePoint.y - this.halfAreaSizeHeight
-      },
+      begin: this.beginTile,
       size: {
         x: this.areaSizeWidth,
         y: this.areaSizeHeight

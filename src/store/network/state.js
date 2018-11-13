@@ -1,9 +1,9 @@
 export default {
   layers: [],
   area: {
-    lt: { lon: 57.317940, lat: 39.817329 },
-    rb: {lon: 57.290485, lat: 39.885135}
+    lt: {lon: 39.817329, lat: 57.317940},
+    rb: {lon: 39.885135, lat: 57.290485}
   },
-  numLayers: 10,
-  numObjectsPerLayer: 10
+  numLayers: 2,
+  numObjectsPerLayer: 5
 }

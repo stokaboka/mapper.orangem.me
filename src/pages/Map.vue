@@ -1,5 +1,5 @@
 <template>
-  <q-page ref="page">
+  <q-page ref="page" class="no-scroll">
 
     <q-resize-observable @resize="onResize"></q-resize-observable>
 
@@ -18,6 +18,7 @@
       ></map-layer>
 
       <objects-layer
+        v-if="mapReady"
         v-for="layer in layers"
         :key="layer.id"
         v-bind="layer">
@@ -68,12 +69,6 @@ export default {
         decDisable: false
       },
 
-      zoom: 12,
-      geoPoint: {
-        lon: 39.849086,
-        lat: 57.303309
-      },
-
       layersPosition: {
         left: 0,
         top: 0
@@ -90,7 +85,9 @@ export default {
           percentage: 0,
           buffer: 0
         }
-      }
+      },
+
+      mapReady: false
     }
   },
 
@@ -106,7 +103,7 @@ export default {
   },
 
   mounted () {
-    this.generateObjects()
+    this.generateObjects({ vm: this })
   },
 
   methods: {
@@ -136,6 +133,7 @@ export default {
       // this.layersPosition.left = 0
       // this.layersPosition.top = 0
       this.mapLayer.loading.progress = true
+      this.mapReady = false
     },
 
     onLoadTilesProgress (counter) {
@@ -148,6 +146,8 @@ export default {
     onLoadTilesComplete () {
       this.mapLayer.loading.progress = false
       this.positionLayersToCenter()
+      this.recalcPixelsPoints({ vm: this })
+      this.mapReady = true
     },
 
     dragLayers (delta) {
@@ -183,7 +183,7 @@ export default {
       this.positionLayersToCenter(size)
     },
 
-    ...mapActions([ 'createLayer', 'generateObjects' ])
+    ...mapActions([ 'createLayer', 'generateObjects', 'recalcPixelsPoints' ])
   }
 
 }

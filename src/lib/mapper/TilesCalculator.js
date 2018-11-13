@@ -153,24 +153,6 @@ class TilesCalculator {
       tile.y * this.tileSize
     )
   }
-
-  // pipe (pList) {
-  //   this.pipeList = pList
-  //   return this
-  // }
-
-  // calc (value) {
-  //   if (this.pipeList) {
-  //     this.calcValue = value
-  //     for (const func of this.pipeList) {
-  //       this.calcValue = func.call(this, this.calcValue)
-  //     }
-  //     this.pipeList = []
-  //     return this.calcValue
-  //   } else {
-  //     return value
-  //   }
-  // }
 }
 
 // module.exports = TilesCalculator

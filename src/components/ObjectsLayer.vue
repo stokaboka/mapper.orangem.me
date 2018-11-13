@@ -8,6 +8,49 @@
 </template>
 
 <script>
+
+const point = function (ctx, options) {
+  ctx.fillStyle = options.fillStyle
+  ctx.fillRect(options.x, options.y, options.w, options.h)
+  // console.log(options)
+}
+
+const point01 = function (ctx, options) {
+  point(ctx,
+    {
+      fillStyle: 'red',
+      x: options.points.pixels.x - 10 / 2,
+      y: options.points.pixels.y - 10 / 2,
+      w: 10,
+      h: 10
+    })
+}
+
+const point02 = function (ctx, options) {
+  point(ctx,
+    {
+      fillStyle: 'blue',
+      x: options.points.pixels.x - 10 / 2,
+      y: options.points.pixels.y - 10 / 2,
+      w: 10,
+      h: 10
+    })
+}
+
+const polyline01 = function (ctx, options) {
+
+}
+
+const polyline02 = function (ctx, options) {
+
+}
+
+const polyline03 = function (ctx, options) {
+
+}
+
+const drawMethods = [point01, point02, polyline01, polyline02, polyline03]
+
 export default {
   name: 'ObjectsLayer',
   data () {
@@ -32,8 +75,7 @@ export default {
     drawObjects () {
       let ctx = this.$refs.canvas.getContext('2d')
 
-      ctx.fillStyle = 'gray'
-      ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
+      ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
 
       for (const object of this.objects) {
         this.drawObject(ctx, object)
@@ -41,20 +83,15 @@ export default {
     },
 
     drawObject (ctx, object) {
-      switch (object.type) {
-        case 0: // point 1
-          break
-        case 1: // point 2
-          break
-        case 2:
-          break
-        case 3:
-          break
-        case 4:
-          break
-      }
+      drawMethods[object.type](ctx, object)
     }
 
+  },
+
+  watch: {
+    objects () {
+      this.drawObjects()
+    }
   }
 }
 </script>
