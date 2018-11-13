@@ -74,32 +74,35 @@ const recalcPoint = (point, vm) => {
 }
 
 const recalcPolyline = (points, vm) => {
-  let out = new Array(points.length)
+  // let out = new Array(points.length)
   for (let i = 0; i < points.length; i++) {
-    out[i] = recalcPoint(points[i], vm)
+    // out[i] = recalcPoint(points[i], vm)
+    points[i] = recalcPoint(points[i], vm)
   }
-  return out
+  return points
+  // return out
 }
 
 const recalcObject = (object, vm) => {
-  let points
+  // let points
   switch (object.type) {
     case 0 : // point 1
     case 1 : // point 2
-      points = recalcPoint(object.points, vm)
+      object.points = recalcPoint(object.points, vm)
       break
     case 2 : // polyline 1
     case 3 : // polyline 2
     case 4 : // polyline 1
-      points = recalcPolyline(object.points, vm)
+      object.points = recalcPolyline(object.points, vm)
   }
 
-  return Object.assign(
-    {},
-    object,
-    {
-      points
-    })
+  return object
+  // return Object.assign(
+  //   {},
+  //   object,
+  //   {
+  //     points
+  //   })
 }
 
 const generateObjects = ({ getters, commit }, {vm}) => {
