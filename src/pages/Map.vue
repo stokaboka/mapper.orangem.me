@@ -103,7 +103,7 @@ export default {
   },
 
   mounted () {
-    this.generateObjects({ vm: this })
+    this.loadNetworkData({ vm: this })
   },
 
   methods: {
@@ -183,7 +183,7 @@ export default {
       this.positionLayersToCenter(size)
     },
 
-    ...mapActions([ 'createLayer', 'generateObjects', 'recalcPixelsPoints' ])
+    ...mapActions([ 'createLayer', 'loadNetworkData', 'recalcPixelsPoints' ])
   }
 
 }
