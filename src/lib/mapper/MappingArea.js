@@ -8,7 +8,6 @@ import TilesCalculator from './TilesCalculator'
 import Piper from '../Piper'
 
 import axios from 'axios'
-// import {DecartPoint} from './Mercator'
 
 class MappingArea {
   constructor () {
@@ -219,9 +218,6 @@ class MappingArea {
     }
 
     this.beginTilePixels = this.tilesCalculator.tileToPixels(this.beginTile)
-
-    // console.log('beginTilePixels')
-    // console.log(this.beginTilePixels)
 
     this.doLoadTiles(geoPoint, 0)
 
