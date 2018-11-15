@@ -18,7 +18,7 @@
       ></map-layer>
 
       <objects-layer
-        v-if="mapReady"
+        v-if="ready"
         v-for="layer in layers"
         :key="layer.id"
         v-bind="layer">
@@ -91,12 +91,16 @@ export default {
       },
 
       mapReady: false,
+      layersReady: false,
 
       layers: []
     }
   },
 
   computed: {
+    ready () {
+      return this.mapReady && this.layersReady
+    },
     layersStyle () {
       return {
         'left': `${this.layersPosition.left}px`,
@@ -119,6 +123,7 @@ export default {
       await dataProvider.load()
         .then((response) => {
           this.layers = dataProvider.getLayers()
+          this.layersReady = true
         })
         .catch((error) => {
           console.log(error)
@@ -151,6 +156,7 @@ export default {
       // this.layersPosition.top = 0
       this.mapLayer.loading.progress = true
       this.mapReady = false
+      this.layersReady = false
     },
 
     onLoadTilesProgress (counter) {
@@ -163,7 +169,8 @@ export default {
     onLoadTilesComplete () {
       this.mapLayer.loading.progress = false
       this.positionLayersToCenter()
-      this.layers = dataProvider.getLayers()
+      // this.layers = dataProvider.getLayers()
+      this.load()
       this.mapReady = true
     },
 
