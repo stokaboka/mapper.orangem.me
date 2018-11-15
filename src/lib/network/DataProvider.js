@@ -9,30 +9,15 @@ export default class DataProvider {
     this.mapper = null
     this.baseUrl = baseUrl
     this.layers = []
-
-    // this.axios = axios.create()
-    // this.axios.interceptors.response.use(
-    //   (response) => {
-    //     this.layers = response.data.layers
-    //     return response
-    //   },
-    //   (error) => {
-    //     return Promise.reject(error)
-    //   }
-    // )
-  }
-
-  responseComplete (response) {
-    this.layers = response.data.layers
-    return response
-  }
-
-  responseError (error) {
-    return Promise.reject(error)
   }
 
   setMapper (mapper) {
     this.mapper = mapper
+    return this
+  }
+
+  setLayers (value) {
+    this.layers = value
     return this
   }
 
@@ -95,10 +80,13 @@ export default class DataProvider {
     const url = `${this.baseUrl}/lon/${this.mapper.geoPoint.lon}/lat/${this.mapper.geoPoint.lat}/zoom/${this.mapper.getZoom()}`
     let response = await axios.get(url)
       .then((resp) => {
-        console.log(resp)
+        this
+          .setLayers(resp.data.layers)
+          .recalc()
       })
       .catch((err) => {
         console.log(err)
+        return err
       })
     return response
   }

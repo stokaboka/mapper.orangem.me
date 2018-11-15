@@ -117,11 +117,11 @@ export default {
 
     async load () {
       await dataProvider.load()
-        .then(() => {
-          console.log('+++++++')
+        .then((response) => {
+          this.layers = dataProvider.getLayers()
         })
-        .catch(() => {
-          console.log('-------')
+        .catch((error) => {
+          console.log(error)
         })
     },
 
@@ -163,12 +163,7 @@ export default {
     onLoadTilesComplete () {
       this.mapLayer.loading.progress = false
       this.positionLayersToCenter()
-      // this.recalcPixelsPoints({ vm: this })
-
-      this.layers = dataProvider
-        .recalc()
-        .getLayers()
-
+      this.layers = dataProvider.getLayers()
       this.mapReady = true
     },
 
