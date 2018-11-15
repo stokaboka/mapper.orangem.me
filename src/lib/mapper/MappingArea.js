@@ -36,7 +36,6 @@ class MappingArea extends Mapping {
   getGrid () {
     let grid = super.getGrid()
     this.doLoadTiles(grid.geoPoint, 0)
-
     return grid
   }
 

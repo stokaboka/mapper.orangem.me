@@ -72,7 +72,7 @@ export default class DataProvider {
   }
 
   recalc () {
-    this.layers = this.recalcLayers()
+    // this.layers = this.recalcLayers()
     return this
   }
 

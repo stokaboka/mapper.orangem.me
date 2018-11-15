@@ -114,20 +114,31 @@ export default {
   mounted () {
     // this.loadNetworkData({ vm: this })
     dataProvider.setMapper(this.$mapping)
-    this.load()
+    // this.loadNetworkData()
   },
 
   methods: {
 
-    async load () {
+    async loadNetworkData () {
       await dataProvider.load()
-        .then((response) => {
+        .then(() => {
           this.layers = dataProvider.getLayers()
           this.layersReady = true
+          console.log('---layersReady---')
         })
         .catch((error) => {
           console.log(error)
         })
+    },
+
+    setRoute () {
+      let newRoute = Object.assign(
+        {},
+        this.$route.params,
+        this.$mapping.geoPoint,
+        {zoom: this.$mapping.getZoom()}
+      )
+      this.$router.push({name: 'map', params: newRoute})
     },
 
     doIncZoom () {
@@ -170,7 +181,8 @@ export default {
       this.mapLayer.loading.progress = false
       this.positionLayersToCenter()
       // this.layers = dataProvider.getLayers()
-      this.load()
+      this.setRoute()
+      this.loadNetworkData()
       this.mapReady = true
     },
 

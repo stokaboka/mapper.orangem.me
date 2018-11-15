@@ -94,15 +94,15 @@ export default {
       this.onImageLoadedFinish(false)
     },
 
-    setRoute () {
-      let newRoute = Object.assign(
-        {},
-        this.$route.params,
-        this.geoPoint,
-        {zoom: this.$mapping.getZoom()}
-      )
-      this.$router.push({name: 'map', params: newRoute})
-    },
+    // setRoute () {
+    //   let newRoute = Object.assign(
+    //     {},
+    //     this.$route.params,
+    //     this.geoPoint,
+    //     {zoom: this.$mapping.getZoom()}
+    //   )
+    //   this.$router.push({name: 'map', params: newRoute})
+    // },
 
     onZoomChange (changes) {
       this.$mapping.changeZoom(changes)
@@ -118,7 +118,7 @@ export default {
     initTiles: function (clear) {
       this.grid = this.$mapping.getGrid()
       this.loadTiles(this.grid, clear)
-      this.setRoute()
+      // this.setRoute()
     },
 
     loadTiles: function (grid, clear) {

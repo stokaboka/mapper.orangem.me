@@ -38,15 +38,36 @@ const point02 = function (ctx, options) {
 }
 
 const polyline01 = function (ctx, options) {
-
+  point(ctx,
+    {
+      fillStyle: 'yellow',
+      x: options.points.pixels.x - 10 / 2,
+      y: options.points.pixels.y - 10 / 2,
+      w: 5,
+      h: 5
+    })
 }
 
 const polyline02 = function (ctx, options) {
-
+  point(ctx,
+    {
+      fillStyle: 'orange',
+      x: options.points.pixels.x - 10 / 2,
+      y: options.points.pixels.y - 10 / 2,
+      w: 8,
+      h: 16
+    })
 }
 
 const polyline03 = function (ctx, options) {
-
+  point(ctx,
+    {
+      fillStyle: 'green',
+      x: options.points.pixels.x - 10 / 2,
+      y: options.points.pixels.y - 10 / 2,
+      w: 10,
+      h: 10
+    })
 }
 
 const drawMethods = [point01, point02, polyline01, polyline02, polyline03]
