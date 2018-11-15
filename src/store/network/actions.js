@@ -11,17 +11,12 @@ const recalcPoint = (point, vm) => {
 }
 
 const recalcPolyline = (points, vm) => {
-  // let out = new Array(points.length)
-  for (let i = 0; i < points.length; i++) {
-    // out[i] = recalcPoint(points[i], vm)
-    points[i] = recalcPoint(points[i], vm)
-  }
-  return points
-  // return out
+  return points.map(point => {
+    return recalcPoint(point, vm)
+  })
 }
 
 const recalcObject = (object, vm) => {
-  // let points
   switch (object.type) {
     case 0 : // point 1
     case 1 : // point 2
@@ -47,30 +42,6 @@ const recalcPixelsPoints = ({ getters, commit }, {vm}) => {
     })
   commit('setLayers', la)
 }
-
-// const recalcPixelsPoints = ({ getters, commit }, {vm}) => {
-//   let layers = getters.layers
-//   let la = new Array(layers.length)
-//
-//   for (let l = 0; l < layers.length; l++) {
-//     // let layer = layers[l]
-//     // let objects = new Array(layer.objects.length)
-//
-//     for (let o = 0; o < layers[l].objects.length; o++) {
-//       layers[l].objects[o] = recalcObject(layers[l].objects[o], vm)
-//     }
-//
-//     la[l] = layers[l]
-//     // la[l] = Object.assign({}, layer, {objects: layer.objects})
-//   }
-//
-//   //
-//   // console.log('recalcPixelsPoints')
-//   // console.log(la)
-//   // console.log('--------------------------')
-//
-//   commit('setLayers', la)
-// }
 
 const createLayer = ({ commit }, objects) => {
   commit('addLayer', objects)

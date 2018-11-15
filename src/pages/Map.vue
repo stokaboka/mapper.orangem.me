@@ -49,13 +49,16 @@
 
 <script>
 
-import {createNamespacedHelpers} from 'vuex'
+// import {createNamespacedHelpers} from 'vuex'
 
 import MapLayer from '../components/MapLayer'
 import MapControls from '../components/MapControls'
 import ObjectsLayer from '../components/ObjectsLayer'
+import DataProvider from '../lib/network/DataProvider'
 
-const { mapState, mapActions } = createNamespacedHelpers('network')
+// const { mapState, mapActions } = createNamespacedHelpers('network')
+
+const dataProvider = new DataProvider('http://localhost:3000/dp')
 
 export default {
   name: 'Map',
@@ -87,7 +90,9 @@ export default {
         }
       },
 
-      mapReady: false
+      mapReady: false,
+
+      layers: []
     }
   },
 
@@ -97,16 +102,28 @@ export default {
         'left': `${this.layersPosition.left}px`,
         'top': `${this.layersPosition.top}px`
       }
-    },
+    }
 
-    ...mapState(['layers'])
+    // ...mapState(['layers'])
   },
 
   mounted () {
-    this.loadNetworkData({ vm: this })
+    // this.loadNetworkData({ vm: this })
+    dataProvider.setMapper(this.$mapping)
+    this.load()
   },
 
   methods: {
+
+    async load () {
+      await dataProvider.load()
+        .then(() => {
+          console.log('+++++++')
+        })
+        .catch(() => {
+          console.log('-------')
+        })
+    },
 
     doIncZoom () {
       this.mapControls = this.$refs.map.onZoomChange(1)
@@ -146,7 +163,12 @@ export default {
     onLoadTilesComplete () {
       this.mapLayer.loading.progress = false
       this.positionLayersToCenter()
-      this.recalcPixelsPoints({ vm: this })
+      // this.recalcPixelsPoints({ vm: this })
+
+      this.layers = dataProvider
+        .recalc()
+        .getLayers()
+
       this.mapReady = true
     },
 
@@ -181,9 +203,9 @@ export default {
 
     onResize (size) {
       this.positionLayersToCenter(size)
-    },
+    }
 
-    ...mapActions([ 'createLayer', 'loadNetworkData', 'recalcPixelsPoints' ])
+    // ...mapActions([ 'createLayer', 'loadNetworkData', 'recalcPixelsPoints' ])
   }
 
 }
