@@ -76,13 +76,15 @@ export default class DataProvider {
     return this
   }
 
-  async load () {
-    const url = `${this.baseUrl}/lon/${this.mapper.geoPoint.lon}/lat/${this.mapper.geoPoint.lat}/zoom/${this.mapper.getZoom()}`
+  async load (layer) {
+    let url = `${this.baseUrl}/lon/${this.mapper.geoPoint.lon}/lat/${this.mapper.geoPoint.lat}/zoom/${this.mapper.getZoom()}`
+    if (layer) {
+      url = `${url}/layer/:layer`
+    }
     let response = await axios.get(url)
       .then((resp) => {
-        this
-          .setLayers(resp.data.layers)
-          .recalc()
+        this.setLayers(resp.data.layers)
+        // .recalc()
       })
       .catch((err) => {
         console.log(err)

@@ -18,7 +18,6 @@
       ></map-layer>
 
       <objects-layer
-        v-if="ready"
         v-for="layer in layers"
         :key="layer.id"
         v-bind="layer">
@@ -93,7 +92,13 @@ export default {
       mapReady: false,
       layersReady: false,
 
-      layers: []
+      layers: [
+        {id: '1'},
+        {id: '2'},
+        {id: '3'},
+        {id: '4'},
+        {id: '5'}
+      ]
     }
   },
 
@@ -112,24 +117,22 @@ export default {
   },
 
   mounted () {
-    // this.loadNetworkData({ vm: this })
     dataProvider.setMapper(this.$mapping)
-    // this.loadNetworkData()
   },
 
   methods: {
 
-    async loadNetworkData () {
-      await dataProvider.load()
-        .then(() => {
-          this.layers = dataProvider.getLayers()
-          this.layersReady = true
-          console.log('---layersReady---')
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
+    // async loadNetworkData (layer) {
+    //   await dataProvider.load(layer)
+    //     .then(() => {
+    //       this.layers = dataProvider.getLayers()
+    //       this.layersReady = true
+    //       console.log('---layersReady---')
+    //     })
+    //     .catch((error) => {
+    //       console.log(error)
+    //     })
+    // },
 
     setRoute () {
       let newRoute = Object.assign(
@@ -182,7 +185,7 @@ export default {
       this.positionLayersToCenter()
       // this.layers = dataProvider.getLayers()
       this.setRoute()
-      this.loadNetworkData()
+      // this.loadNetworkData()
       this.mapReady = true
     },
 

@@ -9,6 +9,10 @@
 
 <script>
 
+import DataProvider from '../lib/network/DataProvider'
+
+const dataProvider = new DataProvider('http://localhost:3000/dp')
+
 const point = function (ctx, options) {
   ctx.fillStyle = options.fillStyle
   ctx.fillRect(options.x, options.y, options.w, options.h)
@@ -81,24 +85,41 @@ export default {
     }
   },
 
-  props: {
-    id: String,
-    title: String,
-    description: String,
-    objects: Array
+  mounted () {
+    dataProvider.setMapper(this.$mapping)
+    this.loadLayerData(this.id)
   },
 
-  mounted () {
-    this.drawObjects()
+  props: {
+    id: String
+    // title: String,
+    // description: String
+    // objects: Array
   },
 
   methods: {
-    drawObjects () {
+    async loadLayerData (layer) {
+      this.clear()
+      await dataProvider.load(layer)
+        .then(() => {
+          let layer = dataProvider.getLayers()
+          this.drawObjects(layer.objects)
+          console.log('---objectsReady---')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+
+    clear () {
       let ctx = this.$refs.canvas.getContext('2d')
-
       ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+    },
 
-      for (const object of this.objects) {
+    drawObjects (objects) {
+      let ctx = this.$refs.canvas.getContext('2d')
+      this.clear()
+      for (const object of objects) {
         this.drawObject(ctx, object)
       }
     },
@@ -110,8 +131,12 @@ export default {
   },
 
   watch: {
-    objects () {
-      this.drawObjects()
+    id (value) {
+      // this.drawObjects()
+      this.loadLayerData(value)
+    },
+    '$route' (to, from) {
+      this.loadLayerData(this.id)
     }
   }
 }
