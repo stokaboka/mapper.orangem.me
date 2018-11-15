@@ -34,37 +34,43 @@ const recalcObject = (object, vm) => {
   }
 
   return object
-  // return Object.assign(
-  //   {},
-  //   object,
-  //   {
-  //     points
-  //   })
 }
 
 const recalcPixelsPoints = ({ getters, commit }, {vm}) => {
-  let layers = getters.layers
-  let la = new Array(layers.length)
-
-  for (let l = 0; l < layers.length; l++) {
-    // let layer = layers[l]
-    // let objects = new Array(layer.objects.length)
-
-    for (let o = 0; o < layers[l].objects.length; o++) {
-      layers[l].objects[o] = recalcObject(layers[l].objects[o], vm)
-    }
-
-    la[l] = layers[l]
-    // la[l] = Object.assign({}, layer, {objects: layer.objects})
-  }
-
-  //
-  // console.log('recalcPixelsPoints')
-  // console.log(la)
-  // console.log('--------------------------')
-
+  let la = getters.layers.map(
+    (layer) => {
+      layer.objects = layer.objects.map(
+        (object) => {
+          return recalcObject(object, vm)
+        })
+      return layer
+    })
   commit('setLayers', la)
 }
+
+// const recalcPixelsPoints = ({ getters, commit }, {vm}) => {
+//   let layers = getters.layers
+//   let la = new Array(layers.length)
+//
+//   for (let l = 0; l < layers.length; l++) {
+//     // let layer = layers[l]
+//     // let objects = new Array(layer.objects.length)
+//
+//     for (let o = 0; o < layers[l].objects.length; o++) {
+//       layers[l].objects[o] = recalcObject(layers[l].objects[o], vm)
+//     }
+//
+//     la[l] = layers[l]
+//     // la[l] = Object.assign({}, layer, {objects: layer.objects})
+//   }
+//
+//   //
+//   // console.log('recalcPixelsPoints')
+//   // console.log(la)
+//   // console.log('--------------------------')
+//
+//   commit('setLayers', la)
+// }
 
 const createLayer = ({ commit }, objects) => {
   commit('addLayer', objects)
