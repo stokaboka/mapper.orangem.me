@@ -53,11 +53,11 @@
 import MapLayer from '../components/MapLayer'
 import MapControls from '../components/MapControls'
 import ObjectsLayer from '../components/ObjectsLayer'
-import DataProvider from '../lib/network/DataProvider'
+// import DataProvider from '../lib/network/DataProvider'
 
 // const { mapState, mapActions } = createNamespacedHelpers('network')
 
-const dataProvider = new DataProvider('http://localhost:3000/dp')
+// const dataProvider = new DataProvider('http://localhost:3000/dp')
 
 export default {
   name: 'Map',
@@ -111,16 +111,16 @@ export default {
   },
 
   mounted () {
-    dataProvider.setMapper(this.$mapping)
+    this.$dataProvider.setMapper(this.$mapping)
     this.loadLayers()
   },
 
   methods: {
 
     async loadLayers () {
-      await dataProvider.loadLayers()
+      await this.$dataProvider.loadLayers()
         .then(() => {
-          this.layers = dataProvider.getLayers()
+          this.layers = this.$dataProvider.getLayers()
           this.layersReady = true
           console.log('---layersReady---')
         })

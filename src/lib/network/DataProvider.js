@@ -38,6 +38,37 @@ export default class DataProvider {
     }
   }
 
+  inBox (box, point) {
+    if (box.x <= point.x && point.x <= box.x + box.width) {
+      if (box.y <= point.y && point.y <= box.y + box.height) {
+        return true
+      }
+    }
+    return false
+  }
+
+  findObjectByRelativePixels (pixels) {
+    let box = {
+      x: pixels.x - 5,
+      y: pixels.y - 5,
+      width: 10,
+      height: 10
+    }
+
+    for (const layer of this.layers) {
+      const layerData = this.getLayerData(layer.id)
+      const object = layerData.find((element) => {
+        return this.inBox(box, element.points.pixels)
+      })
+
+      if (object) {
+        return {layer, object}
+      }
+    }
+
+    return null
+  }
+
   /**
    * TODO change metod/variables names: load, layers
    * @param layer

@@ -4,97 +4,15 @@
     class="mapper-layer-map"
     :width="canvasWidth"
     :height="canvasHeight"
-    v-touch-hold="onTouch"
+    @click="onClick"
   ></canvas>
 </template>
 
 <script>
 
-import DataProvider from '../lib/network/DataProvider'
+import Drawer from '../lib/draw/Drawer'
 
-const dataProvider = new DataProvider('http://localhost:3000/dp')
-
-const point = function (ctx, options) {
-  ctx.fillStyle = options.fillStyle
-  ctx.fillRect(options.x, options.y, options.w, options.h)
-}
-
-const point00 = function (ctx, options) {
-  point(ctx,
-    {
-      fillStyle: 'magenta',
-      x: options.points.pixels.x - 10 / 2,
-      y: options.points.pixels.y - 10 / 2,
-      w: 10,
-      h: 10
-    })
-}
-
-const point01 = function (ctx, options) {
-  point(ctx,
-    {
-      fillStyle: 'red',
-      x: options.points.pixels.x - 10 / 2,
-      y: options.points.pixels.y - 10 / 2,
-      w: 10,
-      h: 10
-    })
-}
-
-const point02 = function (ctx, options) {
-  point(ctx,
-    {
-      fillStyle: 'blue',
-      x: options.points.pixels.x - 10 / 2,
-      y: options.points.pixels.y - 10 / 2,
-      w: 10,
-      h: 10
-    })
-}
-
-const polyline01 = function (ctx, options) {
-  point(ctx,
-    {
-      fillStyle: 'yellow',
-      x: options.points.pixels.x - 10 / 2,
-      y: options.points.pixels.y - 10 / 2,
-      w: 5,
-      h: 5
-    })
-}
-
-const polyline02 = function (ctx, options) {
-  point(ctx,
-    {
-      fillStyle: 'orange',
-      x: options.points.pixels.x - 10 / 2,
-      y: options.points.pixels.y - 10 / 2,
-      w: 8,
-      h: 16
-    })
-}
-
-const polyline03 = function (ctx, options) {
-  point(ctx,
-    {
-      fillStyle: 'green',
-      x: options.points.pixels.x - 10 / 2,
-      y: options.points.pixels.y - 10 / 2,
-      w: 10,
-      h: 10
-    })
-}
-
-// const drawMethods = [point01, point02, polyline01, polyline02, polyline03]
-
-const drawMethods = {
-  '0': point00,
-  '1': point01,
-  '2': point02,
-  '3': polyline01,
-  '4': polyline02,
-  '5': polyline03
-}
+const drawer = new Drawer()
 
 export default {
   name: 'ObjectsLayer',
@@ -106,7 +24,17 @@ export default {
   },
 
   mounted () {
-    dataProvider.setMapper(this.$mapping)
+    this.$dataProvider.setMapper(this.$mapping)
+
+    let ctx = this.$refs.canvas.getContext('2d')
+    drawer
+      .setLayer(this.id)
+      .setContext(ctx)
+      .setSize({
+        width: this.$mapping.areaSizeWidth * 256,
+        height: this.$mapping.areaSizeHeight * 256
+      })
+
     this.loadLayerData(this.id)
   },
 
@@ -119,37 +47,26 @@ export default {
 
   methods: {
     async loadLayerData (layer) {
-      this.clear()
-      await dataProvider.loadLayer(layer)
+      drawer.clear()
+      await this.$dataProvider.loadLayer(layer)
         .then(() => {
-          // this.drawObjects(response.data.objects)
-          this.drawObjects(dataProvider.getLayerData(layer))
           console.log('---objectsReady---')
+          const ld = this.$dataProvider.getLayerData(layer)
+          drawer.drawObjects(ld)
         })
         .catch((error) => {
           console.log(error)
         })
     },
 
-    clear () {
-      let ctx = this.$refs.canvas.getContext('2d')
-      ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
-    },
-
-    drawObjects (objects) {
-      let ctx = this.$refs.canvas.getContext('2d')
-      this.clear()
-      for (const object of objects) {
-        this.drawObject(ctx, object)
+    onClick (event) {
+      const findObj = this.$dataProvider.findObjectByRelativePixels({
+        x: event.offsetX,
+        y: event.offsetY
+      })
+      if (findObj) {
+        console.log(findObj.object.id)
       }
-    },
-
-    drawObject (ctx, object) {
-      drawMethods[object.type](ctx, object)
-    },
-
-    onTouch (event) {
-      console.log(event)
     }
 
   },
