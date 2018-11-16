@@ -121,8 +121,9 @@ export default {
     async loadLayerData (layer) {
       this.clear()
       await dataProvider.loadLayer(layer)
-        .then((response) => {
-          this.drawObjects(response.data.objects)
+        .then(() => {
+          // this.drawObjects(response.data.objects)
+          this.drawObjects(dataProvider.getLayerData(layer))
           console.log('---objectsReady---')
         })
         .catch((error) => {

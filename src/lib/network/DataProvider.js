@@ -9,6 +9,7 @@ export default class DataProvider {
     this.mapper = null
     this.baseUrl = baseUrl
     this.layers = []
+    this.layersData = {}
   }
 
   setMapper (mapper) {
@@ -25,55 +26,16 @@ export default class DataProvider {
     return this.layers
   }
 
-  // recalcPoint (point) {
-  //   return Object.assign(
-  //     {},
-  //     point,
-  //     {
-  //       pixels: this.mapper.geoPointToRelativePixelsPoint(point.geo)
-  //     }
-  //   )
-  // }
-  //
-  // recalcPolyline (points) {
-  //   return points.map(point => {
-  //     return this.recalcPoint(point)
-  //   })
-  // }
-  //
-  // recalcObject (object) {
-  //   switch (object.type) {
-  //     case 0 : // point 1
-  //     case 1 : // point 2
-  //       object.points = this.recalcPoint(object.points)
-  //       break
-  //     case 2 : // polyline 1
-  //     case 3 : // polyline 2
-  //     case 4 : // polyline 1
-  //       object.points = this.recalcPolyline(object.points)
-  //   }
-  //
-  //   return object
-  // }
-  //
-  // recalcObjects (objects) {
-  //   return objects.map(
-  //     (object) => {
-  //       return this.recalcObject(object)
-  //     })
-  // }
-  //
-  // recalcLayers () {
-  //   return this.layers.map(
-  //     (layer) => {
-  //       layer.objects = this.recalcObjects(layer.objects)
-  //       return layer
-  //     })
-  // }
+  setLayerData (layer, data) {
+    this.layersData[layer] = data
+  }
 
-  recalc () {
-    // this.layers = this.recalcLayers()
-    return this
+  getLayerData (layer) {
+    if (this.layersData[layer]) {
+      return this.layersData[layer]
+    } else {
+      return []
+    }
   }
 
   /**
@@ -83,12 +45,12 @@ export default class DataProvider {
    */
   async loadLayer (layer) {
     let url = `${this.baseUrl}/lon/${this.mapper.geoPoint.lon}/lat/${this.mapper.geoPoint.lat}/zoom/${this.mapper.getZoom()}/layer/${layer}`
-    // if (layer) {
-    //   url = `${url}/layer/:layer`
-    // }
+
     let response = await axios.get(url)
       .then((resp) => {
-        return resp
+        // this.layersData[layer] = resp.data.objects
+        this.setLayerData(layer, resp.data.objects)
+        // return resp
       })
       .catch((err) => {
         console.log(err)

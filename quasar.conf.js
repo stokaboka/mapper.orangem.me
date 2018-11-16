@@ -67,7 +67,8 @@ module.exports = function (ctx) {
       ],
       directives: [
         'Ripple',
-        'TouchPan'
+        'TouchPan',
+        'TouchHold'
       ],
       // Quasar plugins
       plugins: [
