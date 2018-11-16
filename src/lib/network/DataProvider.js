@@ -76,15 +76,32 @@ export default class DataProvider {
     return this
   }
 
-  async load (layer) {
+  /**
+   * TODO change metod/variables names: load, layers
+   * @param layer
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  async loadLayer (layer) {
     let url = `${this.baseUrl}/lon/${this.mapper.geoPoint.lon}/lat/${this.mapper.geoPoint.lat}/zoom/${this.mapper.getZoom()}`
     if (layer) {
       url = `${url}/layer/:layer`
     }
     let response = await axios.get(url)
       .then((resp) => {
-        this.setLayers(resp.data.layers)
-        // .recalc()
+        return resp
+      })
+      .catch((err) => {
+        console.log(err)
+        return err
+      })
+    return response
+  }
+
+  async loadLayers () {
+    let url = `${this.baseUrl}/layers`
+    let response = await axios.get(url)
+      .then((resp) => {
+        this.layers = resp.data
       })
       .catch((err) => {
         console.log(err)

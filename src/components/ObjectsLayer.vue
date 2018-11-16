@@ -74,7 +74,15 @@ const polyline03 = function (ctx, options) {
     })
 }
 
-const drawMethods = [point01, point02, polyline01, polyline02, polyline03]
+// const drawMethods = [point01, point02, polyline01, polyline02, polyline03]
+
+const drawMethods = {
+  '1': point01,
+  '2': point02,
+  '3': polyline01,
+  '4': polyline02,
+  '5': polyline03
+}
 
 export default {
   name: 'ObjectsLayer',
@@ -100,10 +108,9 @@ export default {
   methods: {
     async loadLayerData (layer) {
       this.clear()
-      await dataProvider.load(layer)
-        .then(() => {
-          let layer = dataProvider.getLayers()
-          this.drawObjects(layer.objects)
+      await dataProvider.loadLayer(layer)
+        .then((response) => {
+          this.drawObjects(response.data.layers.objects)
           console.log('---objectsReady---')
         })
         .catch((error) => {
@@ -132,7 +139,6 @@ export default {
 
   watch: {
     id (value) {
-      // this.drawObjects()
       this.loadLayerData(value)
     },
     '$route' (to, from) {

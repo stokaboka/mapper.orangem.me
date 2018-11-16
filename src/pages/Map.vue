@@ -92,13 +92,7 @@ export default {
       mapReady: false,
       layersReady: false,
 
-      layers: [
-        {id: '1'},
-        {id: '2'},
-        {id: '3'},
-        {id: '4'},
-        {id: '5'}
-      ]
+      layers: []
     }
   },
 
@@ -118,9 +112,22 @@ export default {
 
   mounted () {
     dataProvider.setMapper(this.$mapping)
+    this.loadLayers()
   },
 
   methods: {
+
+    async loadLayers () {
+      await dataProvider.loadLayers()
+        .then(() => {
+          this.layers = dataProvider.getLayers()
+          this.layersReady = true
+          console.log('---layersReady---')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
 
     // async loadNetworkData (layer) {
     //   await dataProvider.load(layer)
