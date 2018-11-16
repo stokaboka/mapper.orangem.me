@@ -4,6 +4,7 @@
     class="mapper-layer-map"
     :width="canvasWidth"
     :height="canvasHeight"
+    v-touch-hold="onTouch"
   ></canvas>
 </template>
 
@@ -16,7 +17,6 @@ const dataProvider = new DataProvider('http://localhost:3000/dp')
 const point = function (ctx, options) {
   ctx.fillStyle = options.fillStyle
   ctx.fillRect(options.x, options.y, options.w, options.h)
-  // console.log(options)
 }
 
 const point00 = function (ctx, options) {
@@ -146,6 +146,10 @@ export default {
 
     drawObject (ctx, object) {
       drawMethods[object.type](ctx, object)
+    },
+
+    onTouch (event) {
+      console.log(event)
     }
 
   },
