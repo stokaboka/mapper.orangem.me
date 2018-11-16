@@ -19,6 +19,17 @@ const point = function (ctx, options) {
   // console.log(options)
 }
 
+const point00 = function (ctx, options) {
+  point(ctx,
+    {
+      fillStyle: 'magenta',
+      x: options.points.pixels.x - 10 / 2,
+      y: options.points.pixels.y - 10 / 2,
+      w: 10,
+      h: 10
+    })
+}
+
 const point01 = function (ctx, options) {
   point(ctx,
     {
@@ -77,6 +88,7 @@ const polyline03 = function (ctx, options) {
 // const drawMethods = [point01, point02, polyline01, polyline02, polyline03]
 
 const drawMethods = {
+  '0': point00,
   '1': point01,
   '2': point02,
   '3': polyline01,
@@ -110,7 +122,7 @@ export default {
       this.clear()
       await dataProvider.loadLayer(layer)
         .then((response) => {
-          this.drawObjects(response.data.layers.objects)
+          this.drawObjects(response.data.objects)
           console.log('---objectsReady---')
         })
         .catch((error) => {

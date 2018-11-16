@@ -25,51 +25,51 @@ export default class DataProvider {
     return this.layers
   }
 
-  recalcPoint (point) {
-    return Object.assign(
-      {},
-      point,
-      {
-        pixels: this.mapper.geoPointToRelativePixelsPoint(point.geo)
-      }
-    )
-  }
-
-  recalcPolyline (points) {
-    return points.map(point => {
-      return this.recalcPoint(point)
-    })
-  }
-
-  recalcObject (object) {
-    switch (object.type) {
-      case 0 : // point 1
-      case 1 : // point 2
-        object.points = this.recalcPoint(object.points)
-        break
-      case 2 : // polyline 1
-      case 3 : // polyline 2
-      case 4 : // polyline 1
-        object.points = this.recalcPolyline(object.points)
-    }
-
-    return object
-  }
-
-  recalcObjects (objects) {
-    return objects.map(
-      (object) => {
-        return this.recalcObject(object)
-      })
-  }
-
-  recalcLayers () {
-    return this.layers.map(
-      (layer) => {
-        layer.objects = this.recalcObjects(layer.objects)
-        return layer
-      })
-  }
+  // recalcPoint (point) {
+  //   return Object.assign(
+  //     {},
+  //     point,
+  //     {
+  //       pixels: this.mapper.geoPointToRelativePixelsPoint(point.geo)
+  //     }
+  //   )
+  // }
+  //
+  // recalcPolyline (points) {
+  //   return points.map(point => {
+  //     return this.recalcPoint(point)
+  //   })
+  // }
+  //
+  // recalcObject (object) {
+  //   switch (object.type) {
+  //     case 0 : // point 1
+  //     case 1 : // point 2
+  //       object.points = this.recalcPoint(object.points)
+  //       break
+  //     case 2 : // polyline 1
+  //     case 3 : // polyline 2
+  //     case 4 : // polyline 1
+  //       object.points = this.recalcPolyline(object.points)
+  //   }
+  //
+  //   return object
+  // }
+  //
+  // recalcObjects (objects) {
+  //   return objects.map(
+  //     (object) => {
+  //       return this.recalcObject(object)
+  //     })
+  // }
+  //
+  // recalcLayers () {
+  //   return this.layers.map(
+  //     (layer) => {
+  //       layer.objects = this.recalcObjects(layer.objects)
+  //       return layer
+  //     })
+  // }
 
   recalc () {
     // this.layers = this.recalcLayers()
@@ -82,10 +82,10 @@ export default class DataProvider {
    * @returns {Promise<AxiosResponse<any>>}
    */
   async loadLayer (layer) {
-    let url = `${this.baseUrl}/lon/${this.mapper.geoPoint.lon}/lat/${this.mapper.geoPoint.lat}/zoom/${this.mapper.getZoom()}`
-    if (layer) {
-      url = `${url}/layer/:layer`
-    }
+    let url = `${this.baseUrl}/lon/${this.mapper.geoPoint.lon}/lat/${this.mapper.geoPoint.lat}/zoom/${this.mapper.getZoom()}/layer/${layer}`
+    // if (layer) {
+    //   url = `${url}/layer/:layer`
+    // }
     let response = await axios.get(url)
       .then((resp) => {
         return resp
