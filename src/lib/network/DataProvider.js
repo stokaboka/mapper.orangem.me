@@ -38,7 +38,49 @@ export default class DataProvider {
     }
   }
 
-  inBox (box, point) {
+  distanceFromPointToLine (point, line) {
+    const x0 = point.x
+    const y0 = point.y
+    const x1 = line.x1
+    const y1 = line.y1
+    const x2 = line.x2
+    const y2 = line.y2
+
+    if (x1 === x2 && y1 === y2) {
+      return false
+    }
+
+    let d1 = (y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1
+    d1 = Math.abs(d1)
+
+    let d2y = (y2 - y1)
+    let d2x = (x2 - x1)
+    let d2 = Math.sqrt(d2y * d2y + d2x * d2x)
+
+    let d = d1 / d2
+
+    return d
+  }
+
+  onLine (point, points) {
+    for (let i = 1; i < points.length; i++) {
+      const d = this.distanceFromPointToLine(
+        point,
+        {
+          x1: points[i - 1].pixels.x,
+          y1: points[i - 1].pixels.y,
+          x2: points[i].pixels.x,
+          y2: points[i].pixels.y
+        })
+
+      if (d <= 5) {
+        return true
+      }
+    }
+    return false
+  }
+
+  onBox (box, point) {
     if (box.x <= point.x && point.x <= box.x + box.width) {
       if (box.y <= point.y && point.y <= box.y + box.height) {
         return true
@@ -59,10 +101,9 @@ export default class DataProvider {
       const layerData = this.getLayerData(layer.id)
       const object = layerData.find((element) => {
         if (Array.isArray(element.points)) {
-          console.log(' --- polyline ---')
-          return false
+          return this.onLine(pixels, element.points)
         } else {
-          return this.inBox(box, element.points.pixels)
+          return this.onBox(box, element.points.pixels)
         }
       })
 
