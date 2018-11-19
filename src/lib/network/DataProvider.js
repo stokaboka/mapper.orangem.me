@@ -58,7 +58,12 @@ export default class DataProvider {
     for (const layer of this.layers) {
       const layerData = this.getLayerData(layer.id)
       const object = layerData.find((element) => {
-        return this.inBox(box, element.points.pixels)
+        if (Array.isArray(element.points)) {
+          console.log(' --- polyline ---')
+          return false
+        } else {
+          return this.inBox(box, element.points.pixels)
+        }
       })
 
       if (object) {

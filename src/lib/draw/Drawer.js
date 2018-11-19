@@ -1,4 +1,6 @@
 
+import DrawerPrimitives from './DrawerPrimitives'
+
 export default class Drawer {
   constructor () {
     this.ctx = null
@@ -6,18 +8,20 @@ export default class Drawer {
     this.layer = ''
 
     this.methods = {
-      '0': this.point00,
       '1': this.point01,
       '2': this.point02,
-      '3': this.polyline01,
-      '4': this.polyline02,
-      '5': this.polyline03
+      '3': this.point03,
+      '4': this.polyline01,
+      '5': this.polyline02,
+      '6': this.polyline03
     }
 
     this.size = {
       width: 0,
       height: 0
     }
+
+    this.drawerPrimitives = new DrawerPrimitives()
   }
 
   setLayer (layer) {
@@ -27,6 +31,7 @@ export default class Drawer {
 
   setContext (ctx) {
     this.ctx = ctx
+    this.drawerPrimitives.setContext(ctx)
     return this
   }
 
@@ -54,14 +59,14 @@ export default class Drawer {
     }
   }
 
-  point (options) {
-    this.ctx.fillStyle = options.fillStyle
-    this.ctx.fillRect(options.x, options.y, options.w, options.h)
-    return this
-  }
+  // point (options) {
+  //   this.ctx.fillStyle = options.fillStyle
+  //   this.ctx.fillRect(options.x, options.y, options.w, options.h)
+  //   return this
+  // }
 
-  point00 (options) {
-    this.point({
+  point01 (options) {
+    this.drawerPrimitives.point({
       fillStyle: 'magenta',
       x: options.points.pixels.x - 10 / 2,
       y: options.points.pixels.y - 10 / 2,
@@ -71,8 +76,8 @@ export default class Drawer {
     return this
   }
 
-  point01 (options) {
-    this.point({
+  point02 (options) {
+    this.drawerPrimitives.polyline({
       fillStyle: 'red',
       x: options.points.pixels.x - 10 / 2,
       y: options.points.pixels.y - 10 / 2,
@@ -82,8 +87,8 @@ export default class Drawer {
     return this
   }
 
-  point02 (options) {
-    this.point({
+  point03 (options) {
+    this.drawerPrimitives.point({
       fillStyle: 'blue',
       x: options.points.pixels.x - 10 / 2,
       y: options.points.pixels.y - 10 / 2,
@@ -94,34 +99,31 @@ export default class Drawer {
   }
 
   polyline01 (options) {
-    this.point({
+    this.drawerPrimitives.polyline({
       fillStyle: 'orangered',
-      x: options.points.pixels.x - 10 / 2,
-      y: options.points.pixels.y - 10 / 2,
-      w: 10,
-      h: 10
+      strokeStyle: 'orangered',
+      lineWidth: 4,
+      points: options.points.map((point) => { return point.pixels })
     })
     return this
   }
 
   polyline02 (options) {
-    this.point({
-      fillStyle: 'orange',
-      x: options.points.pixels.x - 10 / 2,
-      y: options.points.pixels.y - 10 / 2,
-      w: 8,
-      h: 16
+    this.drawerPrimitives.polyline({
+      fillStyle: 'yellow',
+      strokeStyle: 'green',
+      lineWidth: 5,
+      points: options.points.map((point) => { return point.pixels })
     })
     return this
   }
 
   polyline03 (options) {
-    this.point({
-      fillStyle: 'green',
-      x: options.points.pixels.x - 10 / 2,
-      y: options.points.pixels.y - 10 / 2,
-      w: 10,
-      h: 10
+    this.drawerPrimitives.polyline({
+      fillStyle: 'red',
+      strokeStyle: 'orange',
+      lineWidth: 3,
+      points: options.points.map((point) => { return point.pixels })
     })
     return this
   }
