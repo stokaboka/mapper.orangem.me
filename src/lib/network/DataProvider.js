@@ -10,6 +10,8 @@ export default class DataProvider {
     this.baseUrl = baseUrl
     this.layers = []
     this.layersData = {}
+
+    this.selectionLayer = []
   }
 
   setMapper (mapper) {
@@ -72,7 +74,7 @@ export default class DataProvider {
           x2: points[i].pixels.x,
           y2: points[i].pixels.y
         })
-
+      console.log(`distance ${d}`)
       if (d <= 5) {
         return true
       }
@@ -89,23 +91,60 @@ export default class DataProvider {
     return false
   }
 
-  findObjectByRelativePixels (pixels) {
-    let box = {
+  getFindBox (pixels) {
+    return {
       x: pixels.x - 5,
       y: pixels.y - 5,
       width: 10,
       height: 10
     }
+  }
+
+  addToSelection (object) {
+    this.selectionLayer.push(object)
+  }
+
+  removeFromSelection (object) {
+    this.selectionLayer = this.selectionLayer.map((element) => {
+      return element.id !== object.id
+    })
+  }
+
+  findObjectByRelativePixelsInSelectionLayer (pixels) {
+    const object = this.findObjectByRelativePixelsInLayer(pixels, this.selectionLayer)
+    if (object) {
+      return {layer: {id: 'selection'}, object}
+    } else {
+      return null
+    }
+  }
+
+  findObjectByRelativePixelsInLayer (pixels, layerData) {
+    const box = this.getFindBox(pixels)
+    const object = layerData.find((element) => {
+      if (Array.isArray(element.points)) {
+        return this.onLine(pixels, element.points)
+      } else {
+        return this.onBox(box, element.points.pixels)
+      }
+    })
+
+    return object
+  }
+
+  findObjectByRelativePixels (pixels) {
+    // const box = this.getFindBox(pixels)
 
     for (const layer of this.layers) {
       const layerData = this.getLayerData(layer.id)
-      const object = layerData.find((element) => {
-        if (Array.isArray(element.points)) {
-          return this.onLine(pixels, element.points)
-        } else {
-          return this.onBox(box, element.points.pixels)
-        }
-      })
+      const object = this.findObjectByRelativePixelsInLayer(pixels, layerData)
+      // const object = layerData.find((element) => {
+      //   if (Array.isArray(element.points)) {
+      //     return this.onLine(pixels, element.points)
+      //   } else {
+      //     return this.onBox(box, element.points.pixels)
+      //   }
+      // })
 
       if (object) {
         return {layer, object}
@@ -115,8 +154,12 @@ export default class DataProvider {
     return null
   }
 
+  prepareLayers (layers) {
+    return layers
+  }
+
   /**
-   * TODO change metod/variables names: load, layers
+   * TODO change method/variables names: load, layers
    * @param layer
    * @returns {Promise<AxiosResponse<any>>}
    */
@@ -140,7 +183,20 @@ export default class DataProvider {
     let url = `${this.baseUrl}/layers`
     let response = await axios.get(url)
       .then((resp) => {
-        this.layers = resp.data
+        this.layers = this.prepareLayers(resp.data)
+      })
+      .catch((err) => {
+        console.log(err)
+        return err
+      })
+    return response
+  }
+
+  async getObjectInfo (objectInfo) {
+    let url = `${this.baseUrl}/layer/${objectInfo.layer.id}/object/${objectInfo.object.id}`
+    let response = await axios.get(url)
+      .then((resp) => {
+        return resp
       })
       .catch((err) => {
         console.log(err)

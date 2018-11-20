@@ -20,8 +20,15 @@
       <objects-layer
         v-for="layer in layers"
         :key="layer.id"
-        v-bind="layer">
+        v-bind="layer"
+        @on-object-click="onObjectClick"
+      >
       </objects-layer>
+
+      <selection-layer
+        @on-selected-object-click="onSelectedObjectClick"
+      >
+      </selection-layer>
 
     </div>
 
@@ -53,6 +60,7 @@
 import MapLayer from '../components/MapLayer'
 import MapControls from '../components/MapControls'
 import ObjectsLayer from '../components/ObjectsLayer'
+import SelectionLayer from '../components/SelectionLayer'
 // import DataProvider from '../lib/network/DataProvider'
 
 // const { mapState, mapActions } = createNamespacedHelpers('network')
@@ -61,7 +69,7 @@ import ObjectsLayer from '../components/ObjectsLayer'
 
 export default {
   name: 'Map',
-  components: {ObjectsLayer, MapControls, MapLayer},
+  components: {SelectionLayer, ObjectsLayer, MapControls, MapLayer},
   data () {
     return {
 
@@ -190,9 +198,7 @@ export default {
     onLoadTilesComplete () {
       this.mapLayer.loading.progress = false
       this.positionLayersToCenter()
-      // this.layers = dataProvider.getLayers()
       this.setRoute()
-      // this.loadNetworkData()
       this.mapReady = true
     },
 
@@ -223,6 +229,23 @@ export default {
 
         this.onChangeLayersPosition(deltaPos)
       }
+    },
+
+    async onObjectClick (objectInfo) {
+      this.$dataProvider.addToSelection(objectInfo.object)
+
+      await this.$dataProvider.getObjectInfo(objectInfo)
+        .then((response) => {
+          console.log(response.data)
+          this.$dataProvider.addToSelection(objectInfo.object)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+
+    onSelectedObjectClick (objectInfo) {
+      this.$dataProvider.removeFromSelection(objectInfo.object)
     },
 
     onResize (size) {

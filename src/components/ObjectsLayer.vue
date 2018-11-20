@@ -36,6 +36,8 @@ export default {
       })
 
     this.loadLayerData(this.id)
+
+    // console.log(this.mode, this.id)
   },
 
   props: {
@@ -66,6 +68,7 @@ export default {
       })
       if (findObj) {
         console.log(findObj.object.id)
+        this.$emit('on-object-click', findObj)
       }
     }
 
