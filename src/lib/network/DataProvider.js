@@ -12,6 +12,8 @@ export default class DataProvider {
     this.layersData = {}
 
     this.selectionLayer = []
+
+    this.lineSearchPrecision = 5
   }
 
   setMapper (mapper) {
@@ -74,8 +76,8 @@ export default class DataProvider {
           x2: points[i].pixels.x,
           y2: points[i].pixels.y
         })
-      console.log(`distance ${d}`)
-      if (d <= 5) {
+      // console.log(`distance ${d}`)
+      if (d <= this.lineSearchPrecision) {
         return true
       }
     }
@@ -100,8 +102,27 @@ export default class DataProvider {
     }
   }
 
+  existObjectIn (list, object) {
+    const existObject = list.find((element) => {
+      return element.id === object.id
+    })
+    if (existObject) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  /**
+   * TODO - error on add exist object
+   * @param object
+   */
   addToSelection (object) {
-    this.selectionLayer.push(object)
+    if (this.existObjectIn(this.selectionLayer, object)) {
+      this.removeFromSelection(object)
+    } else {
+      this.selectionLayer = [...this.selectionLayer, object]
+    }
   }
 
   removeFromSelection (object) {
@@ -133,18 +154,9 @@ export default class DataProvider {
   }
 
   findObjectByRelativePixels (pixels) {
-    // const box = this.getFindBox(pixels)
-
     for (const layer of this.layers) {
       const layerData = this.getLayerData(layer.id)
       const object = this.findObjectByRelativePixelsInLayer(pixels, layerData)
-      // const object = layerData.find((element) => {
-      //   if (Array.isArray(element.points)) {
-      //     return this.onLine(pixels, element.points)
-      //   } else {
-      //     return this.onBox(box, element.points.pixels)
-      //   }
-      // })
 
       if (object) {
         return {layer, object}
@@ -168,9 +180,7 @@ export default class DataProvider {
 
     let response = await axios.get(url)
       .then((resp) => {
-        // this.layersData[layer] = resp.data.objects
         this.setLayerData(layer, resp.data.objects)
-        // return resp
       })
       .catch((err) => {
         console.log(err)

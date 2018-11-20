@@ -12,6 +12,8 @@
       <map-layer
         ref="map"
         id="MAP"
+        :width="canvasWidth"
+        :height="canvasHeight"
         @load-tiles-started="onLoadTilesStarted"
         @load-tiles-progress="onLoadTilesProgress"
         @load-tiles-complete="onLoadTilesComplete"
@@ -20,12 +22,17 @@
       <objects-layer
         v-for="layer in layers"
         :key="layer.id"
-        v-bind="layer"
+        :id="layer.id"
+        :width="canvasWidth"
+        :height="canvasHeight"
         @on-object-click="onObjectClick"
       >
       </objects-layer>
 
       <selection-layer
+        ref="selection"
+        :width="canvasWidth"
+        :height="canvasHeight"
         @on-selected-object-click="onSelectedObjectClick"
       >
       </selection-layer>
@@ -72,6 +79,9 @@ export default {
   components: {SelectionLayer, ObjectsLayer, MapControls, MapLayer},
   data () {
     return {
+
+      canvasWidth: this.$mapping.areaSizeWidth * 256,
+      canvasHeight: this.$mapping.areaSizeHeight * 256,
 
       mapControls: {
         zoom: 12,
@@ -130,7 +140,7 @@ export default {
         .then(() => {
           this.layers = this.$dataProvider.getLayers()
           this.layersReady = true
-          console.log('---layersReady---')
+          // console.log('---layersReady---')
         })
         .catch((error) => {
           console.log(error)
@@ -171,12 +181,12 @@ export default {
       const pageHeight = pageSize ? pageSize.height : this.$refs.page.$el.offsetHeight
       const pageWidth = pageSize ? pageSize.width : this.$refs.page.$el.offsetWidth
 
-      const canvasWidth = this.$refs.map.canvasWidth
-      const canvasHeight = this.$refs.map.canvasHeight
+      // const canvasWidth = this.$refs.map.nvasWidth
+      // const canvasHeight = this.$refs.map.canvasHeight
 
       this.layersPosition = {
-        left: Math.round((pageWidth - canvasWidth) / 2, 10),
-        top: Math.round((pageHeight - canvasHeight) / 2, 10)
+        left: Math.round((pageWidth - this.canvasWidth) / 2, 10),
+        top: Math.round((pageHeight - this.canvasHeight) / 2, 10)
       }
     },
 
@@ -232,12 +242,13 @@ export default {
     },
 
     async onObjectClick (objectInfo) {
-      this.$dataProvider.addToSelection(objectInfo.object)
+      // this.$dataProvider.addToSelection(objectInfo.object)
 
       await this.$dataProvider.getObjectInfo(objectInfo)
         .then((response) => {
           console.log(response.data)
           this.$dataProvider.addToSelection(objectInfo.object)
+          this.$refs.selection.redraw()
         })
         .catch((error) => {
           console.log(error)

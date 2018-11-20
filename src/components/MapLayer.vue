@@ -2,31 +2,29 @@
   <canvas
     ref="canvas"
     class="mapper-layer-map"
-    :width="canvasWidth"
-    :height="canvasHeight"
+    :width="width"
+    :height="height"
   ></canvas>
 </template>
 
 <script>
 
-// import MappingArea from '../lib/mapper/MappingArea'
 import {GeoPoint} from '../lib/mapper/Mercator'
-//
-// const mappingArea = new MappingArea()
-//   .setGeoPoint(new GeoPoint(39.849086, 57.303309))
-//   .setZoom(12)
 
 export default {
   name: 'MapLayer',
 
+  props: {
+    width: Number,
+    height: Number
+  },
+
   data () {
     return {
 
-      canvasWidth: this.$mapping.areaSizeWidth * 256,
-      canvasHeight: this.$mapping.areaSizeHeight * 256,
-
       widthTiles: 6,
       heightTiles: 6,
+
       grid: null,
       status: {
         ready: false,
@@ -126,7 +124,7 @@ export default {
 
       if (clear) {
         ctx.fillStyle = 'gray'
-        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
+        ctx.fillRect(0, 0, this.width, this.height)
       }
 
       this.counter.images = grid.size.x * grid.size.y

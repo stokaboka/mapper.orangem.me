@@ -2,8 +2,8 @@
   <canvas
     ref="canvas"
     class="selection-layer-map"
-    :width="canvasWidth"
-    :height="canvasHeight"
+    :width="width"
+    :height="height"
     @click="onClick"
   ></canvas>
 </template>
@@ -17,14 +17,35 @@ const drawer = new Drawer()
 export default {
   name: 'SelectionLayer',
 
+  props: {
+    width: Number,
+    height: Number
+  },
+
   data () {
     return {
-      canvasWidth: this.$mapping.areaSizeWidth * 256,
-      canvasHeight: this.$mapping.areaSizeHeight * 256
     }
   },
 
+  mounted () {
+    this.$dataProvider.setMapper(this.$mapping)
+
+    let ctx = this.$refs.canvas.getContext('2d')
+    drawer
+      .setLayer('selection')
+      .setContext(ctx)
+      .setSize({
+        width: this.width,
+        height: this.height
+      })
+  },
+
   methods: {
+
+    redraw () {
+      drawer.drawObjects(this.$dataProvider.selectionLayer)
+    },
+
     onClick (event) {
       const findObj = this.$dataProvider.findObjectByRelativePixels({
         x: event.offsetX,
@@ -38,7 +59,12 @@ export default {
   },
 
   watch: {
+    selectionLayer (value, oldValue) {
+      console.log('selectionLayer', value)
+      drawer.drawObjects(this.$dataProvider.selectionLayer)
+    },
     '$dataProvider.selectionLayer' (value, oldValue) {
+      console.log('$dataProvider.selectionLayer', value)
       drawer.drawObjects(this.$dataProvider.selectionLayer)
     }
   }

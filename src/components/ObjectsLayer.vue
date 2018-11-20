@@ -2,8 +2,8 @@
   <canvas
     ref="canvas"
     class="mapper-layer-map"
-    :width="canvasWidth"
-    :height="canvasHeight"
+    :width="width"
+    :height="height"
     @click="onClick"
   ></canvas>
 </template>
@@ -17,10 +17,7 @@ const drawer = new Drawer()
 export default {
   name: 'ObjectsLayer',
   data () {
-    return {
-      canvasWidth: this.$mapping.areaSizeWidth * 256,
-      canvasHeight: this.$mapping.areaSizeHeight * 256
-    }
+    return {}
   },
 
   mounted () {
@@ -31,20 +28,17 @@ export default {
       .setLayer(this.id)
       .setContext(ctx)
       .setSize({
-        width: this.$mapping.areaSizeWidth * 256,
-        height: this.$mapping.areaSizeHeight * 256
+        width: this.width,
+        height: this.height
       })
 
     this.loadLayerData(this.id)
-
-    // console.log(this.mode, this.id)
   },
 
   props: {
-    id: String
-    // title: String,
-    // description: String
-    // objects: Array
+    id: String,
+    width: Number,
+    height: Number
   },
 
   methods: {
@@ -52,7 +46,7 @@ export default {
       drawer.clear()
       await this.$dataProvider.loadLayer(layer)
         .then(() => {
-          console.log('---objectsReady---')
+          // console.log('---objectsReady---')
           const ld = this.$dataProvider.getLayerData(layer)
           drawer.drawObjects(ld)
         })
