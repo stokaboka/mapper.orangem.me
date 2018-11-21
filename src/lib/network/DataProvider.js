@@ -14,6 +14,8 @@ export default class DataProvider {
     this.selectionLayer = []
 
     this.lineSearchPrecision = 5
+
+    this.visibleLayers = []
   }
 
   setMapper (mapper) {
@@ -164,6 +166,12 @@ export default class DataProvider {
     return null
   }
 
+  prepareLayersIdCollection (layers) {
+    return layers.map((element) => {
+      return element.id
+    })
+  }
+
   prepareLayers (layers) {
     return layers.map((element) => {
       return {
@@ -198,6 +206,7 @@ export default class DataProvider {
     let response = await axios.get(url)
       .then((resp) => {
         this.layers = this.prepareLayers(resp.data)
+        this.visibleLayers = this.prepareLayersIdCollection(this.layers)
       })
       .catch((err) => {
         console.log(err)
