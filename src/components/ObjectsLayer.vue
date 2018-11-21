@@ -4,7 +4,6 @@
     class="mapper-layer-map"
     :width="width"
     :height="height"
-    @click="onClick"
   ></canvas>
 </template>
 
@@ -53,18 +52,18 @@ export default {
         .catch((error) => {
           console.log(error)
         })
-    },
-
-    onClick (event) {
-      const findObj = this.$dataProvider.findObjectByRelativePixels({
-        x: event.offsetX,
-        y: event.offsetY
-      })
-      if (findObj) {
-        console.log(findObj.object.id)
-        this.$emit('on-object-click', findObj)
-      }
     }
+
+    // onClick (event) {
+    //   const findObj = this.$dataProvider.findObjectByRelativePixels({
+    //     x: event.offsetX,
+    //     y: event.offsetY
+    //   })
+    //   if (findObj) {
+    //     console.log(findObj.object.id)
+    //     this.$emit('on-object-click', findObj)
+    //   }
+    // }
 
   },
 

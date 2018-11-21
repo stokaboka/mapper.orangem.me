@@ -126,8 +126,11 @@ export default class DataProvider {
   }
 
   removeFromSelection (object) {
+    // this.selectionLayer.splice(this.selectionLayer.indexOf(object), 1)
     this.selectionLayer = this.selectionLayer.map((element) => {
-      return element.id !== object.id
+      if (element.id !== object.id) {
+        return element
+      }
     })
   }
 

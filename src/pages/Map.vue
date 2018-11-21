@@ -7,6 +7,7 @@
       class="absolute"
       :style="layersStyle"
       v-touch-pan.prevent="onTouchPan"
+      @click="onClick"
     >
 
       <map-layer
@@ -242,8 +243,6 @@ export default {
     },
 
     async onObjectClick (objectInfo) {
-      // this.$dataProvider.addToSelection(objectInfo.object)
-
       await this.$dataProvider.getObjectInfo(objectInfo)
         .then((response) => {
           console.log(response.data)
@@ -257,10 +256,23 @@ export default {
 
     onSelectedObjectClick (objectInfo) {
       this.$dataProvider.removeFromSelection(objectInfo.object)
+      this.$refs.selection.redraw()
     },
 
     onResize (size) {
       this.positionLayersToCenter(size)
+    },
+
+    onClick (event) {
+      const findObj = this.$dataProvider.findObjectByRelativePixels({
+        x: event.offsetX,
+        y: event.offsetY
+      })
+      if (findObj) {
+        console.log(findObj.object.id)
+        // this.$emit('on-object-click', findObj)
+        this.onObjectClick(findObj)
+      }
     }
 
     // ...mapActions([ 'createLayer', 'loadNetworkData', 'recalcPixelsPoints' ])

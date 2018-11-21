@@ -59,20 +59,13 @@ export default {
         this.$emit('on-selected-object-click', findObj)
       }
     }
-  },
-
-  watch: {
-    selectionLayer (value, oldValue) {
-      console.log('selectionLayer', value)
-      drawer.drawObjects(this.$dataProvider.selectionLayer)
-    },
-    '$dataProvider.selectionLayer' (value, oldValue) {
-      console.log('$dataProvider.selectionLayer', value)
-      drawer.drawObjects(this.$dataProvider.selectionLayer)
-    }
   }
+
 }
 </script>
 
 <style>
+  .selection-layer-map {
+    position: absolute;
+  }
 </style>
