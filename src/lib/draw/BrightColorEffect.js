@@ -18,7 +18,7 @@ export default class BrightColorEffect {
     r = (r > 255 ? 255 : r).toString(16)
     g = (g > 255 ? 255 : g).toString(16)
     b = (b > 255 ? 255 : b).toString(16)
-    console.log(style, `#${r}${g}${b}`)
+    // console.log(style, `#${r}${g}${b}`)
     return `#${r}${g}${b}`
   }
 }

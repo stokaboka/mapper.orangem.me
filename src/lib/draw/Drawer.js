@@ -28,10 +28,12 @@ export default class Drawer {
 
   addEffect (effect) {
     this.drawerPrimitives.addEffect(effect)
+    return this
   }
 
   removeEffect (effect) {
     this.drawerPrimitives.removeEffect(effect)
+    return this
   }
 
   setLayer (layer) {
@@ -77,7 +79,7 @@ export default class Drawer {
 
   point01 (options) {
     this.drawerPrimitives.point({
-      fillStyle: 'magenta',
+      fillStyle: 'green',
       x: options.points.pixels.x - 10 / 2,
       y: options.points.pixels.y - 10 / 2,
       w: 10,
@@ -110,7 +112,7 @@ export default class Drawer {
 
   polyline01 (options) {
     this.drawerPrimitives.polyline({
-      fillStyle: 'orangered',
+      fillStyle: 'red',
       strokeStyle: 'orangered',
       lineWidth: 4,
       points: options.points.map((point) => { return point.pixels })

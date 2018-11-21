@@ -126,12 +126,7 @@ export default class DataProvider {
   }
 
   removeFromSelection (object) {
-    // this.selectionLayer.splice(this.selectionLayer.indexOf(object), 1)
-    this.selectionLayer = this.selectionLayer.map((element) => {
-      if (element.id !== object.id) {
-        return element
-      }
-    })
+    this.selectionLayer.splice(this.selectionLayer.indexOf(object), 1)
   }
 
   findObjectByRelativePixelsInSelectionLayer (pixels) {
@@ -157,6 +152,11 @@ export default class DataProvider {
   }
 
   findObjectByRelativePixels (pixels) {
+    // const objectInSelection = this.findObjectByRelativePixelsInSelectionLayer(pixels)
+    // if (objectInSelection) {
+    //   return objectInSelection
+    // }
+
     for (const layer of this.layers) {
       const layerData = this.getLayerData(layer.id)
       const object = this.findObjectByRelativePixelsInLayer(pixels, layerData)

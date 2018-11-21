@@ -263,15 +263,33 @@ export default {
       this.positionLayersToCenter(size)
     },
 
+    /**
+     * on mouse click event handler
+     * @param event
+     */
     onClick (event) {
-      const findObj = this.$dataProvider.findObjectByRelativePixels({
+      // relative pixels coordinate
+      const pixels = {
         x: event.offsetX,
         y: event.offsetY
-      })
-      if (findObj) {
-        console.log(findObj.object.id)
-        // this.$emit('on-object-click', findObj)
-        this.onObjectClick(findObj)
+      }
+
+      // test objects in selection layer
+      const findSelectionObject = this.$dataProvider.findObjectByRelativePixelsInSelectionLayer(pixels)
+
+      if (findSelectionObject) {
+        console.log('click on selection', findSelectionObject.object.id)
+        // action on selected object
+        this.onSelectedObjectClick(findSelectionObject)
+      } else {
+        // test objects in layers
+        const findObject = this.$dataProvider.findObjectByRelativePixels(pixels)
+
+        if (findObject) {
+          console.log('click on layer', findObject.object.id)
+          // action on selected object
+          this.onObjectClick(findObject)
+        }
       }
     }
 

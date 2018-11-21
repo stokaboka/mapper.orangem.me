@@ -48,6 +48,7 @@ module.exports = function (ctx) {
         'QLayoutHeader',
         'QLayoutDrawer',
         'QLayoutFooter',
+        'QOptionGroup',
         'QPageContainer',
         'QPage',
         'QProgress',

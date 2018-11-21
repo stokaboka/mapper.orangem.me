@@ -4,7 +4,6 @@
     class="selection-layer-map"
     :width="width"
     :height="height"
-    @click="onClick"
   ></canvas>
 </template>
 
@@ -12,10 +11,13 @@
 
 import Drawer from '../lib/draw/Drawer'
 import BrightColorEffect from '../lib/draw/BrightColorEffect'
+import RotateColorEffect from '../lib/draw/RotateColorEffect'
 
 const drawer = new Drawer()
-const brightColorEffect = new BrightColorEffect(30, 30, 30)
-drawer.addEffect(brightColorEffect)
+
+drawer
+  .addEffect(new BrightColorEffect(255, 0, 255))
+  .addEffect(new RotateColorEffect())
 
 export default {
   name: 'SelectionLayer',
@@ -46,19 +48,20 @@ export default {
   methods: {
 
     redraw () {
+      drawer.clear()
       drawer.drawObjects(this.$dataProvider.selectionLayer)
-    },
-
-    onClick (event) {
-      const findObj = this.$dataProvider.findObjectByRelativePixels({
-        x: event.offsetX,
-        y: event.offsetY
-      })
-      if (findObj) {
-        console.log(findObj.object.id)
-        this.$emit('on-selected-object-click', findObj)
-      }
     }
+
+    // onClick (event) {
+    //   const findObj = this.$dataProvider.findObjectByRelativePixelsInSelectionLayer({
+    //     x: event.offsetX,
+    //     y: event.offsetY
+    //   })
+    //   if (findObj) {
+    //     console.log(findObj.object.id)
+    //     this.$emit('on-selected-object-click', findObj)
+    //   }
+    // }
   }
 
 }
