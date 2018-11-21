@@ -41,7 +41,15 @@
 
           <q-collapsible icon="explore" label="Слои">
             <div>
-              Content
+              <q-option-group
+                type="checkbox"
+                color="amber"
+                v-model="checkbox"
+                :options="[
+          { label: 'Bucharest', value: 'bucharest' },
+          { label: 'London', value: 'london' },
+          { label: 'Paris', value: 'paris', color: 'primary' }
+        ]"></q-option-group>
             </div>
           </q-collapsible>
           <q-collapsible icon="perm_identity" label="Second">

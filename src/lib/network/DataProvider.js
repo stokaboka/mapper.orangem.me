@@ -152,11 +152,6 @@ export default class DataProvider {
   }
 
   findObjectByRelativePixels (pixels) {
-    // const objectInSelection = this.findObjectByRelativePixelsInSelectionLayer(pixels)
-    // if (objectInSelection) {
-    //   return objectInSelection
-    // }
-
     for (const layer of this.layers) {
       const layerData = this.getLayerData(layer.id)
       const object = this.findObjectByRelativePixelsInLayer(pixels, layerData)
@@ -170,7 +165,13 @@ export default class DataProvider {
   }
 
   prepareLayers (layers) {
-    return layers
+    return layers.map((element) => {
+      return {
+        ...element,
+        value: element.id,
+        visible: true
+      }
+    })
   }
 
   /**
