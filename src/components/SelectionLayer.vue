@@ -11,8 +11,11 @@
 <script>
 
 import Drawer from '../lib/draw/Drawer'
+import BrightColorEffect from '../lib/draw/BrightColorEffect'
 
 const drawer = new Drawer()
+const brightColorEffect = new BrightColorEffect(30, 30, 30)
+drawer.addEffect(brightColorEffect)
 
 export default {
   name: 'SelectionLayer',

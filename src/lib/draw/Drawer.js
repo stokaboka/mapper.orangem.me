@@ -22,6 +22,16 @@ export default class Drawer {
     }
 
     this.drawerPrimitives = new DrawerPrimitives()
+
+    this.effects = []
+  }
+
+  addEffect (effect) {
+    this.drawerPrimitives.addEffect(effect)
+  }
+
+  removeEffect (effect) {
+    this.drawerPrimitives.removeEffect(effect)
   }
 
   setLayer (layer) {

@@ -11,6 +11,16 @@ export default class DrawerPrimitives {
       strokeStyle: '#333333',
       lineWidth: 5
     }
+
+    this.effects = []
+  }
+
+  addEffect (effect) {
+    this.effects.push(effect)
+  }
+
+  removeEffect (effect) {
+    this.effects.splice(this.effects.indexOf(effect), 1)
   }
 
   setContext (ctx) {
@@ -44,9 +54,21 @@ export default class DrawerPrimitives {
     return this
   }
 
+  applyStyleEffects (style) {
+    for (const effect of this.effects) {
+      if (effect.target === 'style' && effect.prop === 'color') {
+        style = effect.do(style)
+      }
+    }
+    return style
+  }
+
   setStyle (options) {
     this.ctx.fillStyle = options.fillStyle ? options.fillStyle : this.defaults.fillStyle
     this.ctx.strokeStyle = options.strokeStyle ? options.strokeStyle : this.defaults.strokeStyle
     this.ctx.lineWidth = options.lineWidth ? options.lineWidth : this.defaults.lineWidth
+
+    this.ctx.fillStyle = this.applyStyleEffects(this.ctx.fillStyle)
+    this.ctx.strokeStyle = this.applyStyleEffects(this.ctx.strokeStyle)
   }
 }
