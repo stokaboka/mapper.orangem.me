@@ -4,6 +4,12 @@ const setLayers = (state, layers) => {
   state.layers = layers
 }
 
+const setLayersVisible = (state, layers) => {
+  state.layersVisible = state.layers.filter((layer) => {
+    return layer.visible
+  })
+}
+
 const setLayersIndex = (state, layers) => {
   state.layersIndex = keyBy(layers, (layer) => { return layer.id })
 }
@@ -20,4 +26,4 @@ const setLayer = (state, layer) => {
   state.layersIndex[layer.id] = Object.assign({}, layer)
 }
 
-export {setLayers, setLayersIndex, setMapReady, setLayersReady, setLayer}
+export {setLayers, setLayersIndex, setLayersVisible, setMapReady, setLayersReady, setLayer}

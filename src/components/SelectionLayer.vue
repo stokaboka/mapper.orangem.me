@@ -33,8 +33,6 @@ export default {
   },
 
   mounted () {
-    // this.$dataProvider.setMapper(this.$mapping)
-
     let ctx = this.$refs.canvas.getContext('2d')
     drawer
       .setLayer('selection')
@@ -52,12 +50,6 @@ export default {
       drawer.drawObjects(this.$dataProvider.selectionLayer)
     }
 
-  },
-
-  watch: {
-    '$route' (to, from) {
-      this.redraw()
-    }
   }
 
 }

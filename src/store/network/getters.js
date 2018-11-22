@@ -3,9 +3,7 @@ const layers = (state) => {
 }
 
 const layersVisible = (state) => {
-  return state.layers.filter((layer) => {
-    return layer.visible
-  })
+  return state.layersVisible
 }
 
 const indexOfLayer = (state) => (id) => {

@@ -20,8 +20,6 @@ export default {
   },
 
   mounted () {
-    // this.$dataProvider.setMapper(this.$mapping)
-
     let ctx = this.$refs.canvas.getContext('2d')
     drawer
       .setLayer(this.id)
@@ -46,11 +44,17 @@ export default {
       await this.$dataProvider.loadLayer(layer)
         .then(() => {
           const ld = this.$dataProvider.getLayerData(layer)
-          drawer.drawObjects(ld)
+          this.redraw(ld)
+          // drawer.drawObjects(ld)
         })
         .catch((error) => {
           console.log(error)
         })
+    },
+
+    redraw (ld) {
+      drawer.drawObjects(ld)
+      this.$emit('object-layer-redraw')
     }
   },
 

@@ -26,6 +26,7 @@
         :id="layer.id"
         :width="canvasWidth"
         :height="canvasHeight"
+        @object-layer-redraw="onObjectLayerRedraw"
       >
       </objects-layer>
 
@@ -70,10 +71,8 @@ import MapControls from '../components/MapControls'
 import ObjectsLayer from '../components/ObjectsLayer'
 import SelectionLayer from '../components/SelectionLayer'
 
-// const { mapState, mapMutations, mapActions } = createNamespacedHelpers('network')
 const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
 
-// const dataProvider = new DataProvider('http://localhost:3000/dp')
 
 export default {
   name: 'Map',
@@ -230,6 +229,10 @@ export default {
 
     onSelectedObjectClick (objectInfo) {
       this.$dataProvider.removeFromSelection(objectInfo.object)
+      this.$refs.selection.redraw()
+    },
+
+    onObjectLayerRedraw () {
       this.$refs.selection.redraw()
     },
 

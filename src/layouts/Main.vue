@@ -42,7 +42,7 @@
             <div>
               <q-list no-border>
                 <q-item
-                  v-for="layer in $dataProvider.layers"
+                  v-for="layer in layers"
                   :key="layer.id">
                   <q-item-main>
                     <q-checkbox v-model="layer.visible" :label="layer.label" @input="setLayer(layer)" />
@@ -83,7 +83,7 @@
 
 import { openURL } from 'quasar'
 import {createNamespacedHelpers} from 'vuex'
-const { mapMutations } = createNamespacedHelpers('network')
+const { mapGetters, mapActions } = createNamespacedHelpers('network')
 
 export default {
   name: 'Main',
@@ -92,9 +92,14 @@ export default {
       leftDrawerOpen: this.$q.platform.is.desktop
     }
   },
+
+  computed: {
+    ...mapGetters(['layers'])
+  },
+
   methods: {
     openURL,
-    ...mapMutations(['setLayer'])
+    ...mapActions(['setLayer'])
   }
 }
 </script>
