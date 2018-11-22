@@ -73,7 +73,6 @@ import SelectionLayer from '../components/SelectionLayer'
 
 const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
 
-
 export default {
   name: 'Map',
   components: {SelectionLayer, ObjectsLayer, MapControls, MapLayer},
