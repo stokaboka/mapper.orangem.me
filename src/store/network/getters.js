@@ -2,16 +2,32 @@ const layers = (state) => {
   return state.layers
 }
 
-const area = (state) => {
-  return state.area
+const layersVisible = (state) => {
+  return state.layers.filter((layer) => {
+    return layer.visible
+  })
+}
+
+const indexOfLayer = (state) => (id) => {
+  return state.layers.findIndex((element) => {
+    return element.id === id
+  })
 }
 
 const numLayers = (state) => {
-  return state.numLayers
+  return state.layers.length
 }
 
-const numObjectsPerLayer = (state) => {
-  return state.numObjectsPerLayer
+const layersReady = (state) => {
+  return state.layersReady
 }
 
-export {layers, area, numLayers, numObjectsPerLayer}
+const mapReady = (state) => {
+  return state.mapReady
+}
+
+const ready = (state) => {
+  return state.layersReady && state.mapReady
+}
+
+export {layers, layersVisible, indexOfLayer, numLayers, layersReady, mapReady, ready}

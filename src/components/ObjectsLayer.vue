@@ -20,7 +20,7 @@ export default {
   },
 
   mounted () {
-    this.$dataProvider.setMapper(this.$mapping)
+    // this.$dataProvider.setMapper(this.$mapping)
 
     let ctx = this.$refs.canvas.getContext('2d')
     drawer
@@ -45,7 +45,6 @@ export default {
       drawer.clear()
       await this.$dataProvider.loadLayer(layer)
         .then(() => {
-          // console.log('---objectsReady---')
           const ld = this.$dataProvider.getLayerData(layer)
           drawer.drawObjects(ld)
         })
@@ -53,18 +52,6 @@ export default {
           console.log(error)
         })
     }
-
-    // onClick (event) {
-    //   const findObj = this.$dataProvider.findObjectByRelativePixels({
-    //     x: event.offsetX,
-    //     y: event.offsetY
-    //   })
-    //   if (findObj) {
-    //     console.log(findObj.object.id)
-    //     this.$emit('on-object-click', findObj)
-    //   }
-    // }
-
   },
 
   watch: {

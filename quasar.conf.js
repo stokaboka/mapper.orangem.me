@@ -6,6 +6,7 @@ module.exports = function (ctx) {
     plugins: [
       'i18n',
       'axios',
+      'lodash',
       'mapping',
       'dataProvider'
     ],
@@ -44,11 +45,13 @@ module.exports = function (ctx) {
     // framework: 'all' --- includes everything; for dev only!
     framework: {
       components: [
+        'QCheckbox',
         'QLayout',
         'QLayoutHeader',
         'QLayoutDrawer',
         'QLayoutFooter',
         'QOptionGroup',
+        'QCollapsible',
         'QPageContainer',
         'QPage',
         'QProgress',
@@ -64,10 +67,13 @@ module.exports = function (ctx) {
         'QListHeader',
         'QItem',
         'QItemMain',
+        'QItemSeparator',
         'QItemSide',
+        'QItemTile',
         'QWindowResizeObservable'
       ],
       directives: [
+        'CloseOverlay',
         'Ripple',
         'TouchPan',
         'TouchHold'

@@ -26,12 +26,12 @@
         :id="layer.id"
         :width="canvasWidth"
         :height="canvasHeight"
-        @on-object-click="onObjectClick"
       >
       </objects-layer>
 
       <selection-layer
         ref="selection"
+        v-if="$dataProvider.selectionLayerVisible"
         :width="canvasWidth"
         :height="canvasHeight"
         @on-selected-object-click="onSelectedObjectClick"
@@ -63,15 +63,15 @@
 
 <script>
 
-// import {createNamespacedHelpers} from 'vuex'
+import {createNamespacedHelpers} from 'vuex'
 
 import MapLayer from '../components/MapLayer'
 import MapControls from '../components/MapControls'
 import ObjectsLayer from '../components/ObjectsLayer'
 import SelectionLayer from '../components/SelectionLayer'
-// import DataProvider from '../lib/network/DataProvider'
 
-// const { mapState, mapActions } = createNamespacedHelpers('network')
+// const { mapState, mapMutations, mapActions } = createNamespacedHelpers('network')
+const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
 
 // const dataProvider = new DataProvider('http://localhost:3000/dp')
 
@@ -108,57 +108,34 @@ export default {
         }
       },
 
-      mapReady: false,
-      layersReady: false,
-
-      layers: []
+      rawLayers: []
     }
   },
 
   computed: {
-    ready () {
-      return this.mapReady && this.layersReady
-    },
+
     layersStyle () {
       return {
         'left': `${this.layersPosition.left}px`,
         'top': `${this.layersPosition.top}px`
       }
-    }
+    },
 
-    // ...mapState(['layers'])
+    ...mapGetters({
+      layers: 'layersVisible',
+      ready: 'ready',
+      layersReady: 'layersReady',
+      mapReady: 'mapReady'
+    })
+
   },
 
   mounted () {
     this.$dataProvider.setMapper(this.$mapping)
-    this.loadLayers()
+    this.loadLayers({vm: this})
   },
 
   methods: {
-
-    async loadLayers () {
-      await this.$dataProvider.loadLayers()
-        .then(() => {
-          this.layers = this.$dataProvider.getLayers()
-          this.layersReady = true
-          // console.log('---layersReady---')
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
-
-    // async loadNetworkData (layer) {
-    //   await dataProvider.load(layer)
-    //     .then(() => {
-    //       this.layers = dataProvider.getLayers()
-    //       this.layersReady = true
-    //       console.log('---layersReady---')
-    //     })
-    //     .catch((error) => {
-    //       console.log(error)
-    //     })
-    // },
 
     setRoute () {
       let newRoute = Object.assign(
@@ -182,9 +159,6 @@ export default {
       const pageHeight = pageSize ? pageSize.height : this.$refs.page.$el.offsetHeight
       const pageWidth = pageSize ? pageSize.width : this.$refs.page.$el.offsetWidth
 
-      // const canvasWidth = this.$refs.map.nvasWidth
-      // const canvasHeight = this.$refs.map.canvasHeight
-
       this.layersPosition = {
         left: Math.round((pageWidth - this.canvasWidth) / 2, 10),
         top: Math.round((pageHeight - this.canvasHeight) / 2, 10)
@@ -195,8 +169,8 @@ export default {
       // this.layersPosition.left = 0
       // this.layersPosition.top = 0
       this.mapLayer.loading.progress = true
-      this.mapReady = false
-      this.layersReady = false
+      this.setLayersReady(false)
+      this.setMapReady(false)
     },
 
     onLoadTilesProgress (counter) {
@@ -210,7 +184,7 @@ export default {
       this.mapLayer.loading.progress = false
       this.positionLayersToCenter()
       this.setRoute()
-      this.mapReady = true
+      this.setMapReady(true)
     },
 
     dragLayers (delta) {
@@ -279,6 +253,7 @@ export default {
 
       if (findSelectionObject) {
         console.log('click on selection', findSelectionObject.object.id)
+        console.log(findSelectionObject.object)
         // action on selected object
         this.onSelectedObjectClick(findSelectionObject)
       } else {
@@ -291,9 +266,10 @@ export default {
           this.onObjectClick(findObject)
         }
       }
-    }
+    },
 
-    // ...mapActions([ 'createLayer', 'loadNetworkData', 'recalcPixelsPoints' ])
+    ...mapActions(['loadLayers']),
+    ...mapMutations(['setLayersReady', 'setMapReady'])
   }
 
 }

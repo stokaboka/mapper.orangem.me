@@ -12,6 +12,7 @@ export default class DataProvider {
     this.layersData = {}
 
     this.selectionLayer = []
+    this.selectionLayerVisible = true
 
     this.lineSearchPrecision = 5
 
@@ -132,12 +133,13 @@ export default class DataProvider {
   }
 
   findObjectByRelativePixelsInSelectionLayer (pixels) {
-    const object = this.findObjectByRelativePixelsInLayer(pixels, this.selectionLayer)
-    if (object) {
-      return {layer: {id: 'selection'}, object}
-    } else {
-      return null
+    if (this.selectionLayerVisible) {
+      const object = this.findObjectByRelativePixelsInLayer(pixels, this.selectionLayer)
+      if (object) {
+        return {layer: {id: 'selection'}, object}
+      }
     }
+    return null
   }
 
   findObjectByRelativePixelsInLayer (pixels, layerData) {
@@ -155,20 +157,29 @@ export default class DataProvider {
 
   findObjectByRelativePixels (pixels) {
     for (const layer of this.layers) {
-      const layerData = this.getLayerData(layer.id)
-      const object = this.findObjectByRelativePixelsInLayer(pixels, layerData)
+      if (layer.visible) {
+        const layerData = this.getLayerData(layer.id)
+        const object = this.findObjectByRelativePixelsInLayer(pixels, layerData)
 
-      if (object) {
-        return {layer, object}
+        if (object) {
+          return {layer, object}
+        }
       }
     }
-
     return null
   }
 
+  prepareSelectionLayer (layers) {
+    return layers.filter((element) => {
+      this.selectionLayer.find((sl) => {
+        return sl.id === element.id
+      })
+    })
+  }
+
   prepareLayersIdCollection (layers) {
-    return layers.map((element) => {
-      return element.id
+    return layers.filter((element) => {
+      return element.visible
     })
   }
 
@@ -176,7 +187,6 @@ export default class DataProvider {
     return layers.map((element) => {
       return {
         ...element,
-        value: element.id,
         visible: true
       }
     })
@@ -207,6 +217,7 @@ export default class DataProvider {
       .then((resp) => {
         this.layers = this.prepareLayers(resp.data)
         this.visibleLayers = this.prepareLayersIdCollection(this.layers)
+        this.selectionLayer = this.prepareSelectionLayer(this.layers)
       })
       .catch((err) => {
         console.log(err)
@@ -226,5 +237,9 @@ export default class DataProvider {
         return err
       })
     return response
+  }
+
+  onChangeVisibleLayers () {
+
   }
 }

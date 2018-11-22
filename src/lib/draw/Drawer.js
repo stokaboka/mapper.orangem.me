@@ -8,6 +8,8 @@ export default class Drawer {
     this.layer = ''
 
     this.methods = {
+      'communication': this.polyline01,
+      'equipment': this.point01,
       '1': this.point01,
       '2': this.point02,
       '3': this.point03,
@@ -79,7 +81,7 @@ export default class Drawer {
 
   point01 (options) {
     this.drawerPrimitives.point({
-      fillStyle: 'green',
+      fillStyle: options.color,
       x: options.points.pixels.x - 10 / 2,
       y: options.points.pixels.y - 10 / 2,
       w: 10,
@@ -90,7 +92,7 @@ export default class Drawer {
 
   point02 (options) {
     this.drawerPrimitives.polyline({
-      fillStyle: 'red',
+      fillStyle: options.color,
       x: options.points.pixels.x - 10 / 2,
       y: options.points.pixels.y - 10 / 2,
       w: 10,
@@ -101,7 +103,7 @@ export default class Drawer {
 
   point03 (options) {
     this.drawerPrimitives.point({
-      fillStyle: 'blue',
+      fillStyle: options.color,
       x: options.points.pixels.x - 10 / 2,
       y: options.points.pixels.y - 10 / 2,
       w: 10,
@@ -112,8 +114,8 @@ export default class Drawer {
 
   polyline01 (options) {
     this.drawerPrimitives.polyline({
-      fillStyle: 'red',
-      strokeStyle: 'orangered',
+      fillStyle: options.color,
+      strokeStyle: options.color,
       lineWidth: 4,
       points: options.points.map((point) => { return point.pixels })
     })
@@ -122,8 +124,8 @@ export default class Drawer {
 
   polyline02 (options) {
     this.drawerPrimitives.polyline({
-      fillStyle: 'yellow',
-      strokeStyle: 'green',
+      fillStyle: options.color,
+      strokeStyle: options.color,
       lineWidth: 5,
       points: options.points.map((point) => { return point.pixels })
     })
@@ -132,8 +134,8 @@ export default class Drawer {
 
   polyline03 (options) {
     this.drawerPrimitives.polyline({
-      fillStyle: 'red',
-      strokeStyle: 'orange',
+      fillStyle: options.color,
+      strokeStyle: options.color,
       lineWidth: 3,
       points: options.points.map((point) => { return point.pixels })
     })

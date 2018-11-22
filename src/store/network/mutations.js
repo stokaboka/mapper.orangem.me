@@ -1,17 +1,23 @@
-const setLayers = (state, playload) => {
-  state.layers = playload
+import { keyBy } from 'lodash'
+
+const setLayers = (state, layers) => {
+  state.layers = layers
 }
 
-const numLayers = (state, playload) => {
-  state.numLayers = playload
+const setLayersIndex = (state, layers) => {
+  state.layersIndex = keyBy(layers, (layer) => { return layer.id })
 }
 
-const numObjectsPerLayer = (state, playload) => {
-  state.numObjectsPerLayer = playload
+const setLayersReady = (state, value) => {
+  state.layersReady = value
 }
 
-const addLayer = (state, playload) => {
-  state.layers.push(playload)
+const setMapReady = (state, value) => {
+  state.mapReady = value
 }
 
-export {setLayers, addLayer, numLayers, numObjectsPerLayer}
+const setLayer = (state, layer) => {
+  state.layersIndex[layer.id] = Object.assign({}, layer)
+}
+
+export {setLayers, setLayersIndex, setMapReady, setLayersReady, setLayer}
