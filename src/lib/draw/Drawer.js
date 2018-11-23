@@ -55,29 +55,31 @@ export default class Drawer {
 
   clear () {
     // console.log(`clear ${this.layer}`)
-    this.ctx.clearRect(0, 0, this.size.width, this.size.height)
+    if (this.ctx) {
+      this.ctx.clearRect(0, 0, this.size.width, this.size.height)
+    }
     return this
   }
 
   drawObjects (objects) {
-    for (const object of objects) {
-      this.drawObject(object)
+    if (this.ctx) {
+      for (const object of objects) {
+        this.drawObject(object)
+      }
     }
+    return this
   }
 
   drawObject (object) {
-    if (this.methods[object.type]) {
-      this.methods[object.type].call(this, object)
-    } else {
-      console.log(`Draw functiom not defined for type "${object.type}"`)
+    if (this.ctx) {
+      if (this.methods[object.type]) {
+        this.methods[object.type].call(this, object)
+      } else {
+        console.log(`Draw functiom not defined for type "${object.type}"`)
+      }
     }
+    return this
   }
-
-  // point (options) {
-  //   this.ctx.fillStyle = options.fillStyle
-  //   this.ctx.fillRect(options.x, options.y, options.w, options.h)
-  //   return this
-  // }
 
   point01 (options) {
     this.drawerPrimitives.point({

@@ -123,12 +123,13 @@ export default {
       }
     },
 
-    ...mapGetters({
-      layers: 'layers',
-      ready: 'ready',
-      layersReady: 'layersReady',
-      mapReady: 'mapReady'
-    })
+    ...mapGetters([
+      'layers',
+      'ready',
+      'layersReady',
+      'mapReady',
+      'selectionLayerVisible'
+    ])
 
   },
 
@@ -222,12 +223,23 @@ export default {
       }
     },
 
+    addToSelection (object) {
+      this.$dataProvider.addToSelection(object)
+      this.$refs.selection.redraw()
+    },
+
+    showObjectInfo (object) {
+      console.log('showObjectInfo')
+      console.log(object)
+    },
+
     async onObjectClick (objectInfo) {
       await this.$dataProvider.getObjectInfo(objectInfo)
         .then((response) => {
-          console.log(response.data)
-          this.$dataProvider.addToSelection(objectInfo.object)
-          this.$refs.selection.redraw()
+          if (this.selectionLayerVisible) {
+            this.addToSelection(objectInfo.object)
+          }
+          this.showObjectInfo(objectInfo.object)
         })
         .catch((error) => {
           console.log(error)
@@ -262,12 +274,15 @@ export default {
         y: event.offsetY
       }
 
+      let findSelectionObject = null
+
       // test objects in selection layer
-      const findSelectionObject = this.$dataProvider.findObjectByRelativePixelsInSelectionLayer(pixels)
+      if (this.selectionLayerVisible) {
+        findSelectionObject = this.$dataProvider.findObjectByRelativePixelsInSelectionLayer(pixels)
+      }
 
       if (findSelectionObject) {
-        console.log('click on selection', findSelectionObject.object.id)
-        console.log(findSelectionObject.object)
+        // console.log('click on selection', findSelectionObject.object.id)
         // action on selected object
         this.onSelectedObjectClick(findSelectionObject)
       } else {
@@ -275,7 +290,7 @@ export default {
         const findObject = this.$dataProvider.findObjectByRelativePixels(pixels)
 
         if (findObject) {
-          console.log('click on layer', findObject.object.id)
+          // console.log('click on layer', findObject.object.id)
           // action on selected object
           this.onObjectClick(findObject)
         }

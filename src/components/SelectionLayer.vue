@@ -1,7 +1,6 @@
 <template>
   <canvas
-    ref="canvas"
-    v-if="selectionLayerVisible"
+    :ref="cid"
     class="selection-layer-map"
     :width="width"
     :height="height"
@@ -32,6 +31,7 @@ export default {
 
   data () {
     return {
+      cid: 'selection'
     }
   },
 
@@ -56,14 +56,37 @@ export default {
 
   methods: {
 
-    redraw () {
-      let ctx = this.$refs.canvas.getContext('2d')
+    clear () {
       drawer
-        .setContext(ctx)
+        .setContext(this.getContext())
+        .clear()
+    },
+
+    redraw () {
+      drawer
+        .setContext(this.getContext())
         .clear()
         .drawObjects(this.$dataProvider.selectionLayer)
+    },
+
+    getContext () {
+      if (this.$refs[this.cid]) {
+        return this.$refs[this.cid].getContext('2d')
+      } else {
+        return null
+      }
     }
 
+  },
+
+  watch: {
+    selectionLayerVisible (value) {
+      if (value) {
+        this.redraw()
+      } else {
+        this.clear()
+      }
+    }
   }
 
 }

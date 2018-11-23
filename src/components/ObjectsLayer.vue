@@ -74,28 +74,27 @@ export default {
     },
 
     clear () {
-      let ctx = this.$refs[this.cid].getContext('2d')
-      if (ctx) {
-        drawer
-          .setContext(ctx)
-          .clear()
-      }
+      drawer
+        .setContext(this.getContext())
+        .clear()
     },
 
     redraw () {
-      // console.log(`redraw ${this.id} ${this.label}`)
       const ld = this.$dataProvider.getLayerData(this.id)
 
-      let ctx = this.$refs[this.cid].getContext('2d')
-      if (ctx) {
-        drawer
-          .setContext(ctx)
-          .clear()
-          .drawObjects(ld)
+      drawer
+        .setContext(this.getContext())
+        .clear()
+        .drawObjects(ld)
 
-        this.$emit('object-layer-redraw', this.id)
+      this.$emit('object-layer-redraw', this.id)
+    },
+
+    getContext () {
+      if (this.$refs[this.cid]) {
+        return this.$refs[this.cid].getContext('2d')
       } else {
-        console.log(`context not found. layer ${this.id} ${this.label}`)
+        return null
       }
     }
   },
@@ -104,6 +103,14 @@ export default {
 
     id (value) {
       this.loadLayerData(value)
+    },
+
+    visible (value) {
+      if (value) {
+        this.redraw()
+      } else {
+        this.clear()
+      }
     },
 
     '$route' (to, from) {
