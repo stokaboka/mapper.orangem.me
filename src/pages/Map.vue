@@ -61,13 +61,12 @@
     </map-controls>
 
     <q-popover touch-position v-model="showObjectInfoPopOver">
-      dddddd
-      <div v-if="selectedObject">
-        <q-icon :name="selectedObject.icon" ></q-icon>
-        <span>{{selectedObject.id}}</span>
-        <span>{{selectedObject.label}}</span>
-        <span>{{selectedObject.type}}</span>
-      </div>
+
+      <object-card
+        v-if="selectedObject"
+        v-bind="selectedObject">
+      </object-card>
+
     </q-popover>
 
   </q-page>
@@ -80,6 +79,7 @@ import MapControls from '../components/MapControls'
 import ObjectsLayer from '../components/ObjectsLayer'
 import SelectionLayer from '../components/SelectionLayer'
 import {createNamespacedHelpers} from 'vuex'
+import ObjectCard from '../components/ObjectCard'
 
 const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
 
@@ -89,7 +89,7 @@ let flags = {
 
 export default {
   name: 'Map',
-  components: {SelectionLayer, ObjectsLayer, MapControls, MapLayer},
+  components: {ObjectCard, SelectionLayer, ObjectsLayer, MapControls, MapLayer},
   data () {
     return {
 

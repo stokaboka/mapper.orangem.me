@@ -45,6 +45,12 @@ module.exports = function (ctx) {
     framework: {
       components: [
         'QCheckbox',
+        'QCard',
+        'QCardTitle',
+        'QCardMain',
+        'QCardMedia',
+        'QCardSeparator',
+        'QCardActions',
         'QLayout',
         'QLayoutHeader',
         'QLayoutDrawer',
