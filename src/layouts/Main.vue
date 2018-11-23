@@ -60,6 +60,14 @@
 
         <q-item-separator />
 
+        <q-collapsible icon="category" label="Объект">
+          <div>
+            Объект
+          </div>
+        </q-collapsible>
+
+        <q-item-separator />
+
           <q-collapsible icon="edit" label="Редактор">
             <div>
               Редактор

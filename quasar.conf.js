@@ -60,7 +60,7 @@ module.exports = function (ctx) {
         'QPageContainer',
         'QPage',
         'QProgress',
-        'QPopover',
+        // 'QPopover',
         'QRouteTab',
         'QResizeObservable',
         'QToolbar',
@@ -87,6 +87,7 @@ module.exports = function (ctx) {
       // Quasar plugins
       plugins: [
         'Notify'
+        // 'Dialog'
         // 'LoadingBar'
       ],
 

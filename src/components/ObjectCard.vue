@@ -1,14 +1,25 @@
 <template>
-  <q-card>
+  <q-card class="object-card__size">
     <q-card-title>
+      <q-icon :name="icon"  slot="right" ></q-icon>
       <span>{{type}}</span>
     </q-card-title>
     <q-card-separator />
     <q-card-main>
-      <q-icon :name="icon" ></q-icon>
-      <span>{{id}}</span>
-      <span>{{label}}</span>
-      <span>{{type}}</span>
+
+      <dl class="horizontal">
+
+        <dt class="text-left">ID</dt>
+        <dd>{{id}}</dd>
+
+        <dt class="text-left">Name</dt>
+        <dd>{{label}}</dd>
+
+        <dt class="text-left">Type</dt>
+        <dd>{{type}}</dd>
+
+      </dl>
+
     </q-card-main>
   </q-card>
 </template>
@@ -29,4 +40,7 @@ export default {
 </script>
 
 <style>
+  .object-card__size {
+    min-width: 300px;
+  }
 </style>

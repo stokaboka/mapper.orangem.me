@@ -60,14 +60,14 @@
     >
     </map-controls>
 
-    <q-popover touch-position v-model="showObjectInfoPopOver">
+    <!--<q-popover touch-position v-model="showObjectInfoPopOver">-->
 
-      <object-card
-        v-if="selectedObject"
-        v-bind="selectedObject">
-      </object-card>
+      <!--<object-card-->
+        <!--v-if="selectedObject"-->
+        <!--v-bind="selectedObject">-->
+      <!--</object-card>-->
 
-    </q-popover>
+    <!--</q-popover>-->
 
   </q-page>
 </template>
@@ -246,10 +246,10 @@ export default {
       this.selectedObject = object
     },
 
-    async onObjectClick (objectInfo) {
+    async onObjectClick (objectInfo, addToSelection) {
       await this.$dataProvider.getObjectInfo(objectInfo)
         .then((response) => {
-          if (this.selectionLayerVisible) {
+          if (this.selectionLayerVisible && addToSelection) {
             this.addToSelection(objectInfo.object)
           }
           this.showObjectInfo(objectInfo.object)
@@ -277,6 +277,8 @@ export default {
      * @param event
      */
     onClick (event) {
+      this.showObjectInfoPopOver = false
+
       if (flags.touchPan) {
         return
       }
@@ -290,7 +292,7 @@ export default {
       let findSelectionObject = null
 
       // test objects in selection layer
-      if (this.selectionLayerVisible) {
+      if (this.selectionLayerVisible && event.ctrlKey) {
         findSelectionObject = this.$dataProvider.findObjectByRelativePixelsInSelectionLayer(pixels)
       }
 
@@ -305,7 +307,7 @@ export default {
         if (findObject) {
           // console.log('click on layer', findObject.object.id)
           // action on selected object
-          this.onObjectClick(findObject)
+          this.onObjectClick(findObject, event.ctrlKey)
         }
       }
     },
