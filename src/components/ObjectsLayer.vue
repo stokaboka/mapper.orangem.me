@@ -1,7 +1,6 @@
 <template>
   <canvas
     :ref="cid"
-    v-if="visible"
     :id="cid"
     class="mapper-layer-map"
     :width="width"
@@ -35,6 +34,8 @@ export default {
   updated () {
     if (this.visible) {
       this.redraw()
+    } else {
+      this.clear()
     }
   },
 
@@ -56,7 +57,11 @@ export default {
     async loadLayerData (layer) {
       await this.$dataProvider.loadLayer(layer)
         .then(() => {
-          this.redraw()
+          if (this.visible) {
+            this.redraw()
+          } else {
+            this.clear()
+          }
         })
         .catch((error) => {
           console.log(error)
@@ -64,11 +69,21 @@ export default {
     },
 
     reset () {
+      this.clear()
       this.loadLayerData(this.id)
     },
 
+    clear () {
+      let ctx = this.$refs[this.cid].getContext('2d')
+      if (ctx) {
+        drawer
+          .setContext(ctx)
+          .clear()
+      }
+    },
+
     redraw () {
-      console.log(`redraw ${this.id} ${this.label}`)
+      // console.log(`redraw ${this.id} ${this.label}`)
       const ld = this.$dataProvider.getLayerData(this.id)
 
       let ctx = this.$refs[this.cid].getContext('2d')
@@ -89,13 +104,6 @@ export default {
 
     id (value) {
       this.loadLayerData(value)
-    },
-
-    visible (value) {
-      // drawer.clear()
-      // if (value) {
-      //   this.redraw()
-      // }
     },
 
     '$route' (to, from) {

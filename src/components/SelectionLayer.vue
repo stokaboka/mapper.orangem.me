@@ -1,6 +1,7 @@
 <template>
   <canvas
     ref="canvas"
+    v-if="selectionLayerVisible"
     class="selection-layer-map"
     :width="width"
     :height="height"
@@ -12,7 +13,9 @@
 import Drawer from '../lib/draw/Drawer'
 import BrightColorEffect from '../lib/draw/BrightColorEffect'
 import RotateColorEffect from '../lib/draw/RotateColorEffect'
+import {createNamespacedHelpers} from 'vuex'
 
+const { mapGetters } = createNamespacedHelpers('network')
 const drawer = new Drawer()
 
 drawer
@@ -33,21 +36,32 @@ export default {
   },
 
   mounted () {
-    let ctx = this.$refs.canvas.getContext('2d')
     drawer
       .setLayer('selection')
-      .setContext(ctx)
       .setSize({
         width: this.width,
         height: this.height
       })
   },
 
+  updated () {
+    if (this.selectionLayerVisible) {
+      this.redraw()
+    }
+  },
+
+  computed: {
+    ...mapGetters(['selectionLayerVisible'])
+  },
+
   methods: {
 
     redraw () {
-      drawer.clear()
-      drawer.drawObjects(this.$dataProvider.selectionLayer)
+      let ctx = this.$refs.canvas.getContext('2d')
+      drawer
+        .setContext(ctx)
+        .clear()
+        .drawObjects(this.$dataProvider.selectionLayer)
     }
 
   }

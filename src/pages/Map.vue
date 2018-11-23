@@ -34,7 +34,6 @@
 
       <selection-layer
         ref="selection"
-        v-if="$dataProvider.selectionLayerVisible"
         :width="canvasWidth"
         :height="canvasHeight"
         @on-selected-object-click="onSelectedObjectClick"
@@ -66,12 +65,11 @@
 
 <script>
 
-import {createNamespacedHelpers} from 'vuex'
-
 import MapLayer from '../components/MapLayer'
 import MapControls from '../components/MapControls'
 import ObjectsLayer from '../components/ObjectsLayer'
 import SelectionLayer from '../components/SelectionLayer'
+import {createNamespacedHelpers} from 'vuex'
 
 const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
 
@@ -126,7 +124,6 @@ export default {
     },
 
     ...mapGetters({
-      // layers: 'layersVisible',
       layers: 'layers',
       ready: 'ready',
       layersReady: 'layersReady',

@@ -50,7 +50,7 @@
                 </q-item>
                 <q-item>
                   <q-item-main>
-                    <q-checkbox v-model="$dataProvider.selectionLayerVisible" label="Selection" />
+                    <q-checkbox v-model="selectionLayerVisible" label="Selection"/>
                   </q-item-main>
                 </q-item>
               </q-list>
@@ -88,7 +88,7 @@
 
 import { openURL } from 'quasar'
 import {createNamespacedHelpers} from 'vuex'
-const { mapGetters, mapActions } = createNamespacedHelpers('network')
+const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
 
 export default {
   name: 'Main',
@@ -105,11 +105,21 @@ export default {
       })
     },
 
+    selectionLayerVisible: {
+      get () {
+        return this.$store.getters['network/selectionLayerVisible']
+      },
+      set (value) {
+        this.$store.commit('network/setSelectionLayerVisible', value)
+      }
+    },
+
     ...mapGetters(['layers'])
   },
 
   methods: {
     openURL,
+    ...mapMutations(['setSelectionLayerVisible']),
     ...mapActions(['setLayer'])
   }
 }

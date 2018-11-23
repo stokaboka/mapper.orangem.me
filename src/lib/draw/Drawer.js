@@ -54,7 +54,7 @@ export default class Drawer {
   }
 
   clear () {
-    console.log(`clear ${this.layer}`)
+    // console.log(`clear ${this.layer}`)
     this.ctx.clearRect(0, 0, this.size.width, this.size.height)
     return this
   }

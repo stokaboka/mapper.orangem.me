@@ -4,6 +4,8 @@
 
 import axios from 'axios'
 
+import {onLine, onBox, getFindBox} from './Geometry'
+
 export default class DataProvider {
   constructor (baseUrl) {
     this.mapper = null
@@ -14,9 +16,7 @@ export default class DataProvider {
     this.selectionLayer = []
     this.selectionLayerVisible = true
 
-    this.lineSearchPrecision = 5
-
-    this.visibleLayers = []
+    // this.visibleLayers = []
   }
 
   setMapper (mapper) {
@@ -42,66 +42,6 @@ export default class DataProvider {
       return this.layersData[layer]
     } else {
       return []
-    }
-  }
-
-  distanceFromPointToLine (point, line) {
-    const x0 = point.x
-    const y0 = point.y
-    const x1 = line.x1
-    const y1 = line.y1
-    const x2 = line.x2
-    const y2 = line.y2
-
-    if (x1 === x2 && y1 === y2) {
-      return false
-    }
-
-    let d1 = (y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1
-    d1 = Math.abs(d1)
-
-    let d2y = (y2 - y1)
-    let d2x = (x2 - x1)
-    let d2 = Math.sqrt(d2y * d2y + d2x * d2x)
-
-    let d = d1 / d2
-
-    return d
-  }
-
-  onLine (point, points) {
-    for (let i = 1; i < points.length; i++) {
-      const d = this.distanceFromPointToLine(
-        point,
-        {
-          x1: points[i - 1].pixels.x,
-          y1: points[i - 1].pixels.y,
-          x2: points[i].pixels.x,
-          y2: points[i].pixels.y
-        })
-      // console.log(`distance ${d}`)
-      if (d <= this.lineSearchPrecision) {
-        return true
-      }
-    }
-    return false
-  }
-
-  onBox (box, point) {
-    if (box.x <= point.x && point.x <= box.x + box.width) {
-      if (box.y <= point.y && point.y <= box.y + box.height) {
-        return true
-      }
-    }
-    return false
-  }
-
-  getFindBox (pixels) {
-    return {
-      x: pixels.x - 5,
-      y: pixels.y - 5,
-      width: 10,
-      height: 10
     }
   }
 
@@ -143,12 +83,12 @@ export default class DataProvider {
   }
 
   findObjectByRelativePixelsInLayer (pixels, layerData) {
-    const box = this.getFindBox(pixels)
+    const box = getFindBox(pixels)
     const object = layerData.find((element) => {
       if (Array.isArray(element.points)) {
-        return this.onLine(pixels, element.points)
+        return onLine(pixels, element.points)
       } else {
-        return this.onBox(box, element.points.pixels)
+        return onBox(box, element.points.pixels)
       }
     })
 
@@ -216,7 +156,6 @@ export default class DataProvider {
     let response = await axios.get(url)
       .then((resp) => {
         this.layers = this.prepareLayers(resp.data)
-        this.visibleLayers = this.prepareLayersIdCollection(this.layers)
         this.selectionLayer = this.prepareSelectionLayer(this.layers)
       })
       .catch((err) => {
