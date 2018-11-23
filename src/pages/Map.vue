@@ -24,6 +24,8 @@
         v-for="layer in layers"
         :key="layer.id"
         :id="layer.id"
+        :label="layer.label"
+        :visible="layer.visible"
         :width="canvasWidth"
         :height="canvasHeight"
         @object-layer-redraw="onObjectLayerRedraw"
@@ -73,6 +75,10 @@ import SelectionLayer from '../components/SelectionLayer'
 
 const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
 
+let flags = {
+  touchPan: false
+}
+
 export default {
   name: 'Map',
   components: {SelectionLayer, ObjectsLayer, MapControls, MapLayer},
@@ -120,7 +126,8 @@ export default {
     },
 
     ...mapGetters({
-      layers: 'layersVisible',
+      // layers: 'layersVisible',
+      layers: 'layers',
       ready: 'ready',
       layersReady: 'layersReady',
       mapReady: 'mapReady'
@@ -198,6 +205,8 @@ export default {
       this.dragLayers(event.delta)
 
       if (event.isFirst) {
+        flags.touchPan = true
+
         this.startDragLayersPosition = {
           left: this.layersPosition.left,
           top: this.layersPosition.top
@@ -211,6 +220,8 @@ export default {
         }
 
         this.onChangeLayersPosition(deltaPos)
+
+        flags.touchPan = false
       }
     },
 
@@ -244,6 +255,10 @@ export default {
      * @param event
      */
     onClick (event) {
+      if (flags.touchPan) {
+        return
+      }
+
       // relative pixels coordinate
       const pixels = {
         x: event.offsetX,

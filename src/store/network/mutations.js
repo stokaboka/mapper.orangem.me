@@ -1,17 +1,26 @@
-import { keyBy } from 'lodash'
+// import { keyBy } from 'lodash'
+import Vue from 'vue'
+
+// const reindexLayersCollection = (layers) => {
+//   return layers.map((layer, index) => {
+//     return Object.assign({}, layer, {index})
+//   })
+// }
 
 const setLayers = (state, layers) => {
   state.layers = layers
+}
+
+const reindexLayers = (state) => {
+  state.layers = state.layers.map((layer, index) => {
+    return Object.assign(layer, {index})
+  })
 }
 
 const setLayersVisible = (state, layers) => {
   state.layersVisible = state.layers.filter((layer) => {
     return layer.visible
   })
-}
-
-const setLayersIndex = (state, layers) => {
-  state.layersIndex = keyBy(layers, (layer) => { return layer.id })
 }
 
 const setLayersReady = (state, value) => {
@@ -23,7 +32,16 @@ const setMapReady = (state, value) => {
 }
 
 const setLayer = (state, layer) => {
-  state.layersIndex[layer.id] = Object.assign({}, layer)
+  Vue.set(state.layers, layer.index, layer)
+  // console.log('mutation setLayer')
+  // console.log(state.layers)
 }
 
-export {setLayers, setLayersIndex, setLayersVisible, setMapReady, setLayersReady, setLayer}
+export {
+  setLayers,
+  reindexLayers,
+  setLayersVisible,
+  setMapReady,
+  setLayersReady,
+  setLayer
+}

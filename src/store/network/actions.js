@@ -4,8 +4,8 @@ const loadLayers = ({ commit }, {vm}) => {
   vm.$dataProvider.loadLayers()
     .then(() => {
       commit('setLayers', vm.$dataProvider.getLayers())
-      commit('setLayersIndex', vm.$dataProvider.getLayers())
-      commit('setLayersVisible', vm.$dataProvider.getLayers())
+      commit('reindexLayers')
+      // commit('setLayersVisible')
       commit('setLayersReady', true)
     })
     .catch((error) => {
@@ -15,7 +15,8 @@ const loadLayers = ({ commit }, {vm}) => {
 
 const setLayer = ({ commit }, layer) => {
   commit('setLayer', layer)
-  commit('setLayersVisible')
+  commit('reindexLayers')
+  // commit('setLayersVisible')
 }
 
 export {loadLayers, setLayer}

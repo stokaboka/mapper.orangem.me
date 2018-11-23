@@ -42,10 +42,15 @@
             <div>
               <q-list no-border>
                 <q-item
-                  v-for="layer in layers"
+                  v-for="layer in xLayers"
                   :key="layer.id">
                   <q-item-main>
                     <q-checkbox v-model="layer.visible" :label="layer.label" @input="setLayer(layer)" />
+                  </q-item-main>
+                </q-item>
+                <q-item>
+                  <q-item-main>
+                    <q-checkbox v-model="$dataProvider.selectionLayerVisible" label="Selection" />
                   </q-item-main>
                 </q-item>
               </q-list>
@@ -94,6 +99,12 @@ export default {
   },
 
   computed: {
+    xLayers () {
+      return this.layers.map((layer) => {
+        return {...layer}
+      })
+    },
+
     ...mapGetters(['layers'])
   },
 

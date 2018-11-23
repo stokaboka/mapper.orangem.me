@@ -17,7 +17,9 @@ export default function (/* { ssrContext } */) {
     modules: {
       example,
       network
-    }
+    },
+
+    strict: process.env.NODE_ENV !== 'production'
   })
 
   return Store
