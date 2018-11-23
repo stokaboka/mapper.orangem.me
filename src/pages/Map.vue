@@ -60,6 +60,16 @@
     >
     </map-controls>
 
+    <q-popover touch-position v-model="showObjectInfoPopOver">
+      dddddd
+      <div v-if="selectedObject">
+        <q-icon :name="selectedObject.icon" ></q-icon>
+        <span>{{selectedObject.id}}</span>
+        <span>{{selectedObject.label}}</span>
+        <span>{{selectedObject.type}}</span>
+      </div>
+    </q-popover>
+
   </q-page>
 </template>
 
@@ -110,7 +120,8 @@ export default {
         }
       },
 
-      rawLayers: []
+      showObjectInfoPopOver: false,
+      selectedObject: null
     }
   },
 
@@ -231,6 +242,8 @@ export default {
     showObjectInfo (object) {
       console.log('showObjectInfo')
       console.log(object)
+      this.showObjectInfoPopOver = true
+      this.selectedObject = object
     },
 
     async onObjectClick (objectInfo) {

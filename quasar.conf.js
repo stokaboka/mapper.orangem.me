@@ -6,7 +6,6 @@ module.exports = function (ctx) {
     plugins: [
       'i18n',
       'axios',
-      'lodash',
       'mapping',
       'dataProvider'
     ],
@@ -55,6 +54,7 @@ module.exports = function (ctx) {
         'QPageContainer',
         'QPage',
         'QProgress',
+        'QPopover',
         'QRouteTab',
         'QResizeObservable',
         'QToolbar',

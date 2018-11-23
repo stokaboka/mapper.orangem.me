@@ -60,19 +60,13 @@
 
         <q-item-separator />
 
-          <q-collapsible icon="perm_identity" label="Second">
+          <q-collapsible icon="edit" label="Редактор">
             <div>
-              Content 1
+              Редактор
             </div>
           </q-collapsible>
 
         <q-item-separator />
-
-          <q-collapsible icon="shopping_cart" label="Third">
-            <div>
-              Content 2
-            </div>
-          </q-collapsible>
 
       </q-list>
     </q-layout-drawer>
