@@ -11,6 +11,9 @@
 <script>
 
 import Drawer from '../lib/draw/Drawer'
+import {createNamespacedHelpers} from 'vuex'
+
+const { mapGetters } = createNamespacedHelpers('network')
 
 const drawer = new Drawer()
 
@@ -50,7 +53,9 @@ export default {
   computed: {
     cid () {
       return `OBJECTS_${this.id}`
-    }
+    },
+
+    ...mapGetters(['mapReady'])
   },
 
   methods: {
@@ -106,6 +111,14 @@ export default {
     },
 
     visible (value) {
+      if (value) {
+        this.redraw()
+      } else {
+        this.clear()
+      }
+    },
+
+    mapReady (value) {
       if (value) {
         this.redraw()
       } else {

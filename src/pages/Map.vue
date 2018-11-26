@@ -60,15 +60,6 @@
     >
     </map-controls>
 
-    <!--<q-popover touch-position v-model="showObjectInfoPopOver">-->
-
-      <!--<object-card-->
-        <!--v-if="selectedObject"-->
-        <!--v-bind="selectedObject">-->
-      <!--</object-card>-->
-
-    <!--</q-popover>-->
-
   </q-page>
 </template>
 

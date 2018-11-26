@@ -9,10 +9,10 @@ import Mapping from './Mapping'
 import axios from 'axios'
 
 class MappingArea extends Mapping {
-  constructor () {
+  constructor (url) {
     super()
-    this.tilesLoaderUrl = 'http://localhost:3000/mapper'
-    this.tilesUrl = 'http://localhost:3000/images'
+    this.tilesLoaderUrl = `${url}/mapper`
+    this.tilesUrl = `${url}/images`
   }
 
   doLoadTiles (geoPoint, reload) {
