@@ -38,7 +38,7 @@
         inset-delimiter
         highlight>
 
-          <q-collapsible icon="layers" label="Слои">
+          <q-collapsible opened icon="layers" label="Слои">
             <div>
               <q-list no-border>
                 <q-item
@@ -60,10 +60,12 @@
 
         <q-item-separator />
 
-        <q-collapsible icon="category" label="Объект">
-          <div>
-            Объект
-          </div>
+        <q-collapsible opened icon="category" label="Объект">
+            <object-card
+              v-if="selectedObject"
+              v-bind="selectedObject"
+            >
+            </object-card>
         </q-collapsible>
 
         <q-item-separator />
@@ -90,10 +92,12 @@
 
 import { openURL } from 'quasar'
 import {createNamespacedHelpers} from 'vuex'
+import ObjectCard from '../components/ObjectCard'
 const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
 
 export default {
   name: 'Main',
+  components: {ObjectCard},
   data () {
     return {
       leftDrawerOpen: this.$q.platform.is.desktop
@@ -116,12 +120,12 @@ export default {
       }
     },
 
-    ...mapGetters(['layers'])
+    ...mapGetters(['layers', 'selectedObject'])
   },
 
   methods: {
     openURL,
-    ...mapMutations(['setSelectionLayerVisible']),
+    ...mapMutations(['setSelectionLayerVisible', 'setSelectedObject']),
     ...mapActions(['setLayer'])
   }
 }

@@ -120,8 +120,7 @@ export default {
         }
       },
 
-      showObjectInfoPopOver: false,
-      selectedObject: null
+      showObjectInfoPopOver: false
     }
   },
 
@@ -131,6 +130,15 @@ export default {
       return {
         'left': `${this.layersPosition.left}px`,
         'top': `${this.layersPosition.top}px`
+      }
+    },
+
+    selectedObject: {
+      get () {
+        return this.$store.getters['network/selectedObject']
+      },
+      set (value) {
+        this.$store.commit('network/setSelectedObject', value)
       }
     },
 
@@ -240,8 +248,8 @@ export default {
     },
 
     showObjectInfo (object) {
-      console.log('showObjectInfo')
-      console.log(object)
+      // console.log('showObjectInfo')
+      // console.log(object)
       this.showObjectInfoPopOver = true
       this.selectedObject = object
     },

@@ -18,10 +18,15 @@ const selectionLayerVisible = (state) => {
   return state.selectionLayerVisible
 }
 
+const selectedObject = (state) => {
+  return state.selectedObject
+}
+
 export {
   layers,
   layersReady,
   mapReady,
   ready,
-  selectionLayerVisible
+  selectionLayerVisible,
+  selectedObject
 }

@@ -26,6 +26,18 @@ const setSelectionLayerVisible = (state, visible) => {
   state.selectionLayerVisible = visible
 }
 
+const setSelectedObject = (state, object) => {
+  state.selectedObject = Object.assign(
+    {},
+    {
+      id: object.id,
+      type: object.type,
+      label: object.label,
+      color: object.color,
+      icon: object.icon
+    })
+}
+
 export {
   setLayers,
   setLayer,
@@ -34,5 +46,6 @@ export {
   setMapReady,
   setLayersReady,
 
-  setSelectionLayerVisible
+  setSelectionLayerVisible,
+  setSelectedObject
 }

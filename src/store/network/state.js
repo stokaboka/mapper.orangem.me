@@ -4,5 +4,7 @@ export default {
   layers: [],
   layersIndex: {},
 
-  selectionLayerVisible: true
+  selectionLayerVisible: true,
+
+  selectedObject: null
 }
