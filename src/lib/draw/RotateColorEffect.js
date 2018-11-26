@@ -3,6 +3,11 @@
  */
 
 export default class RotateColorEffect {
+  constructor () {
+    this.target = 'style'
+    this.prop = 'color'
+  }
+
   do (style) {
     const _r = style.substr(1, 2)
     const _g = style.substr(3, 2)

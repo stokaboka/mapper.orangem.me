@@ -31,6 +31,8 @@ export default class DrawerPrimitives {
   point (options) {
     this.setStyle(options)
     this.ctx.fillRect(options.x, options.y, options.w, options.h)
+    this.ctx.stroke()
+    this.applyDrawEffects(options)
     return this
   }
 
@@ -40,15 +42,22 @@ export default class DrawerPrimitives {
     this.ctx.moveTo(options.points[0].x, options.points[0].y)
     this.ctx.lineTo(options.points[1].x, options.points[1].y)
     this.ctx.stroke()
+    this.applyDrawEffects(options)
     return this
   }
 
   polyline (options) {
-    this.setStyle(options)
     this.ctx.beginPath()
     this.ctx.moveTo(options.points[0].x, options.points[0].y)
     for (let i = 1; i < options.points.length; i++) {
+      this.setStyle(options)
       this.ctx.lineTo(options.points[i].x, options.points[i].y)
+      this.applyDrawEffects({
+        points: [
+          options.points[i - 1],
+          options.points[i]
+        ]
+      })
     }
     this.ctx.stroke()
     return this
@@ -61,6 +70,16 @@ export default class DrawerPrimitives {
       }
     }
     return style
+  }
+
+  applyDrawEffects (options) {
+    for (const effect of this.effects) {
+      if (effect.target === 'draw') {
+        effect
+          .setContext(this.ctx)
+          .do(options)
+      }
+    }
   }
 
   setStyle (options) {

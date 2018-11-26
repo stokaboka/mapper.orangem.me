@@ -10,16 +10,18 @@
 <script>
 
 import Drawer from '../lib/draw/Drawer'
-import BrightColorEffect from '../lib/draw/BrightColorEffect'
-import RotateColorEffect from '../lib/draw/RotateColorEffect'
+// import BrightColorEffect from '../lib/draw/BrightColorEffect'
+// import RotateColorEffect from '../lib/draw/RotateColorEffect'
+import BorderEffect from '../lib/draw/BorderEffect'
 import {createNamespacedHelpers} from 'vuex'
 
 const { mapGetters } = createNamespacedHelpers('network')
 const drawer = new Drawer()
 
 drawer
-  .addEffect(new BrightColorEffect(255, 0, 255))
-  .addEffect(new RotateColorEffect())
+  // .addEffect(new BrightColorEffect(255, 0, 255))
+  // .addEffect(new RotateColorEffect())
+  .addEffect(new BorderEffect('#ff0000', 2))
 
 export default {
   name: 'SelectionLayer',
