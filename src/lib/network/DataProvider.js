@@ -45,6 +45,15 @@ export default class DataProvider {
     }
   }
 
+  setLayer (layer) {
+    const idx = this.layers.findIndex((elem) => {
+      return elem.id === layer.id
+    })
+    if (idx > -1) {
+      this.layers[idx] = Object.assign(this.layers[idx], layer)
+    }
+  }
+
   existObjectIn (list, object) {
     const existObject = list.find((element) => {
       return element.id === object.id

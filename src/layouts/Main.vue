@@ -45,7 +45,7 @@
                   v-for="layer in xLayers"
                   :key="layer.id">
                   <q-item-main>
-                    <q-checkbox v-model="layer.visible" :label="layer.label" @input="setLayer(layer)" />
+                    <q-checkbox v-model="layer.visible" :label="layer.label" @input="setLayerData(layer)" />
                   </q-item-main>
                 </q-item>
                 <q-item>
@@ -125,6 +125,10 @@ export default {
 
   methods: {
     openURL,
+    setLayerData (layer) {
+      this.setLayer({layer, vm: this})
+      // this.$dataProvider.setLayer(layer)
+    },
     ...mapMutations(['setSelectionLayerVisible', 'setSelectedObject']),
     ...mapActions(['setLayer'])
   }

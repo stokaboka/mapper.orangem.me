@@ -12,9 +12,10 @@ const loadLayers = ({ commit }, {vm}) => {
     })
 }
 
-const setLayer = ({ commit }, layer) => {
+const setLayer = ({ commit }, {layer, vm}) => {
   commit('setLayer', layer)
   commit('reindexLayers')
+  vm.$dataProvider.setLayer(layer)
 }
 
 export {loadLayers, setLayer}
