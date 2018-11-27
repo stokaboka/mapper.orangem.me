@@ -10,6 +10,10 @@
 <script>
 
 import {GeoPoint} from '../lib/mapper/Mercator'
+import ImagesCache from '../lib/network/ImagesCache'
+
+const imagesCache = new ImagesCache()
+let loadedGridTiles = {}
 
 export default {
   name: 'MapLayer',
@@ -92,37 +96,29 @@ export default {
       this.onImageLoadedFinish(false)
     },
 
-    // setRoute () {
-    //   let newRoute = Object.assign(
-    //     {},
-    //     this.$route.params,
-    //     this.geoPoint,
-    //     {zoom: this.$mapping.getZoom()}
-    //   )
-    //   this.$router.push({name: 'map', params: newRoute})
-    // },
-
     onZoomChange (changes) {
       this.$mapping.changeZoom(changes)
+      loadedGridTiles = {}
       this.initTiles(false)
       return this.$mapping.getMapControlsInfo()
     },
 
     onPan (position) {
       this.$mapping.onPan(position)
+      loadedGridTiles = {}
       this.initTiles(false)
     },
 
     initTiles: function (clear) {
       this.grid = this.$mapping.getGrid()
       this.loadTiles(this.grid, clear)
-      // this.setRoute()
     },
 
     loadTiles: function (grid, clear) {
       let ctx = this.$refs.canvas.getContext('2d')
 
       if (clear) {
+        loadedGridTiles = {}
         ctx.fillStyle = 'gray'
         ctx.fillRect(0, 0, this.width, this.height)
       }
@@ -141,19 +137,40 @@ export default {
     },
 
     loadTile: function (ctx, begin, x, y) {
-      let img = new Image()
       let self = this
 
-      img.addEventListener('load', function (event) {
-        ctx.drawImage(this, x * 256, y * 256)
+      const tileX = begin.x + x
+      const tileY = begin.y + y
+      const tile = `${tileX}-${tileY}`
+
+      if (loadedGridTiles[tile]) {
+        console.log(`tile loaded and drawing complete ${tile}`)
         self.onImageLoadedComplete()
-      })
+        return
+      }
 
-      img.addEventListener('error', function (event) {
-        self.onImageLoadedError()
-      })
+      if (imagesCache.exist(this.$mapping.getZoom(), tile)) {
+        const cachedImage = imagesCache.get(this.$mapping.getZoom(), tile)
+        ctx.drawImage(cachedImage, x * 256, y * 256)
+        loadedGridTiles[tile] = 1
+        console.log(`draw from images cache ${tile}`)
+        self.onImageLoadedComplete()
+      } else {
+        let img = new Image()
 
-      img.src = this.$mapping.getTileImageFileName(begin.x + x, begin.y + y)
+        img.addEventListener('load', function (event) {
+          ctx.drawImage(this, x * 256, y * 256)
+          loadedGridTiles[tile] = 1
+          self.onImageLoadedComplete()
+          imagesCache.put(self.$mapping.getZoom(), tile, this)
+        })
+
+        img.addEventListener('error', function (event) {
+          self.onImageLoadedError()
+        })
+
+        img.src = this.$mapping.getTileImageFileName(tileX, tileY)
+      }
     }
   },
 
