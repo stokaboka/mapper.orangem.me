@@ -194,6 +194,8 @@ export default {
     },
 
     onLoadTilesComplete () {
+      console.log('onLoadTilesComplete')
+      this.mapLayer.loading.percentage = 100
       this.mapLayer.loading.progress = false
       this.positionLayersToCenter()
       this.setRoute()

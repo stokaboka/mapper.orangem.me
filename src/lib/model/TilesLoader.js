@@ -37,6 +37,11 @@ export default class TilesLoader {
      * @type {null}
      */
     this.ctx = null
+
+    this.busy = false
+
+    this.waitTimerTimeout = 500
+    this.waitTimer = false
   }
 
   init (vue) {
@@ -97,12 +102,26 @@ export default class TilesLoader {
   }
 
   onImageLoadedFinish (sendProgress) {
+    this.counter.complete = 0
+    this.counter.errors = 0
+
+    for (const tile in this.loaded) {
+      if (this.loaded[tile] === 1) {
+        this.counter.complete++
+      }
+      if (this.loaded[tile] === 0) {
+        this.counter.errors++
+      }
+    }
+
     if (this.counter.complete + this.counter.errors === this.counter.images) {
       if (this.counter.errors > 0) {
-        setTimeout(() => {
-          // this.initTiles(false)
-          this.loadTiles(this.grid, false)
-        }, 500)
+        const self = this
+        if (!this.waitTimer) {
+          this.waitTimer = setTimeout(() => {
+            self.loadTiles()
+          }, this.waitTimerTimeout)
+        }
       } else {
         this.emit('load-tiles-complete')
       }
@@ -113,17 +132,23 @@ export default class TilesLoader {
     }
   }
 
-  onImageLoadedComplete () {
-    this.counter.complete++
+  onImageLoadedComplete (tile) {
+    this.loaded[tile] = 1
+    this.busy = false
     this.onImageLoadedFinish(true)
   }
 
-  onImageLoadedError () {
-    this.counter.errors++
+  onImageLoadedError (tile) {
+    this.loaded[tile] = 0
+    this.busy = false
     this.onImageLoadedFinish(false)
   }
 
   loadTiles () {
+    if (this.waitTimer) {
+      clearTimeout(this.waitTimer)
+    }
+
     this.counter.images = this.grid.size.x * this.grid.size.y
     this.counter.complete = 0
     this.counter.errors = 0
@@ -146,31 +171,30 @@ export default class TilesLoader {
     const zoom = this.mapping.getZoom()
 
     if (this.loaded[tile]) {
-      console.log(`tile loaded and drawing complete ${tile}`)
-      this.onImageLoadedComplete()
       return
     }
 
     if (this.cache.exist(zoom, tile)) {
       const cachedImage = this.cache.get(zoom, tile)
       this.ctx.drawImage(cachedImage, x * 256, y * 256)
-      this.loaded[tile] = 1
+      // this.loaded[tile] = 1
       console.log(`draw from images cache ${tile}`)
-      this.onImageLoadedComplete()
+      this.onImageLoadedComplete(tile)
     } else {
       const img = new Image()
 
       img.addEventListener('load', function (event) {
         self.ctx.drawImage(this, x * 256, y * 256)
-        self.loaded[tile] = 1
+        // self.loaded[tile] = 1
         self.cache.put(zoom, tile, this)
-        self.onImageLoadedComplete()
+        self.onImageLoadedComplete(tile)
       })
 
       img.addEventListener('error', function (event) {
-        self.onImageLoadedError()
+        self.onImageLoadedError(tile)
       })
 
+      this.busy = true
       img.src = this.mapping.getTileImageFileName(tileX, tileY)
     }
   }
