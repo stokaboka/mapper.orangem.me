@@ -72,7 +72,7 @@ import SelectionLayer from '../components/SelectionLayer'
 import {createNamespacedHelpers} from 'vuex'
 import ObjectCard from '../components/ObjectCard'
 
-const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
+const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('model')
 
 let flags = {
   touchPan: false
@@ -126,10 +126,10 @@ export default {
 
     selectedObject: {
       get () {
-        return this.$store.getters['network/selectedObject']
+        return this.$store.getters['model/selectedObject']
       },
       set (value) {
-        this.$store.commit('network/setSelectedObject', value)
+        this.$store.commit('model/setSelectedObject', value)
       }
     },
 

@@ -44,6 +44,4 @@ class MappingArea extends Mapping {
   }
 }
 
-// module.exports = MappingArea
-// module.exports.default = MappingArea
 export default MappingArea

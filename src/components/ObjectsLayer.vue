@@ -13,7 +13,7 @@
 import Drawer from '../lib/draw/Drawer'
 import {createNamespacedHelpers} from 'vuex'
 
-const { mapGetters } = createNamespacedHelpers('network')
+const { mapGetters } = createNamespacedHelpers('model')
 
 const drawer = new Drawer()
 

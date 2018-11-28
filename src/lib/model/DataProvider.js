@@ -15,8 +15,6 @@ export default class DataProvider {
 
     this.selectionLayer = []
     this.selectionLayerVisible = true
-
-    // this.visibleLayers = []
   }
 
   setMapper (mapper) {
@@ -185,9 +183,5 @@ export default class DataProvider {
         return err
       })
     return response
-  }
-
-  onChangeVisibleLayers () {
-
   }
 }

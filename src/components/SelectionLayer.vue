@@ -15,7 +15,7 @@ import Drawer from '../lib/draw/Drawer'
 import BorderEffect from '../lib/draw/BorderEffect'
 import {createNamespacedHelpers} from 'vuex'
 
-const { mapGetters } = createNamespacedHelpers('network')
+const { mapGetters } = createNamespacedHelpers('model')
 const drawer = new Drawer()
 
 drawer

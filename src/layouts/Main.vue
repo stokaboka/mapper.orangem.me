@@ -93,7 +93,7 @@
 import { openURL } from 'quasar'
 import {createNamespacedHelpers} from 'vuex'
 import ObjectCard from '../components/ObjectCard'
-const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('network')
+const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('model')
 
 export default {
   name: 'Main',
@@ -113,10 +113,10 @@ export default {
 
     selectionLayerVisible: {
       get () {
-        return this.$store.getters['network/selectionLayerVisible']
+        return this.$store.getters['model/selectionLayerVisible']
       },
       set (value) {
-        this.$store.commit('network/setSelectionLayerVisible', value)
+        this.$store.commit('model/setSelectionLayerVisible', value)
       }
     },
 
