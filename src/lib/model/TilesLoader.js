@@ -10,6 +10,8 @@ export default class TilesLoader {
     this.mapping = null
     this.dataProvider = null
 
+    this.debug = false
+
     this.grid = null
 
     /**
@@ -27,7 +29,8 @@ export default class TilesLoader {
     this.counter = {
       images: 0,
       complete: 0,
-      errors: 0
+      errors: 0,
+      loading: 0
     }
 
     this.size = {width: 0, height: 0}
@@ -49,7 +52,15 @@ export default class TilesLoader {
     this.mapping = this.vue.$mapping
     this.dataProvider = this.vue.$dataProvider
 
+    this.log('INIT', 'Complete')
+
     return this
+  }
+
+  log (type, message) {
+    if (this.debug) {
+      console.log(`*** TilesLoader:: [${type}] ${message}`)
+    }
   }
 
   setSize (width, height) {
@@ -65,6 +76,8 @@ export default class TilesLoader {
       errors: 0
     }
 
+    this.log('CLEAR', 'Counter cleared')
+
     return this
   }
 
@@ -73,23 +86,27 @@ export default class TilesLoader {
       this.ctx.fillStyle = 'gray'
       this.ctx.fillRect(0, 0, this.size.width, this.size.height)
     }
-
+    this.log('CLEAR', 'Context cleared')
     return this
   }
 
   clearCache () {
     this.cache.clear()
+    this.log('CLEAR', 'Cache cleared')
     return this
   }
 
   setContext (ctx) {
     this.ctx = ctx
+    this.log('SET', 'Context initialized')
     return this
   }
 
   start () {
     this.grid = this.mapping.getGrid()
+    this.emit('load-tiles-started')
     this.loadTiles()
+    this.log('START', 'load started')
     return this
   }
 
@@ -101,9 +118,24 @@ export default class TilesLoader {
     }
   }
 
+  startWaitTimer () {
+    const self = this
+    this.log('ON LOADED FINISH', 'start wait timer')
+
+    if (this.waitTimer) {
+      clearTimeout(this.waitTimer)
+    }
+
+    this.waitTimer = setTimeout(() => {
+      self.loadTiles()
+    }, this.waitTimerTimeout)
+  }
+
   onImageLoadedFinish (sendProgress) {
     this.counter.complete = 0
     this.counter.errors = 0
+
+    this.log('ON LOADED FINISH', `complete: ${sendProgress} `)
 
     for (const tile in this.loaded) {
       if (this.loaded[tile] === 1) {
@@ -114,56 +146,62 @@ export default class TilesLoader {
       }
     }
 
+    this.log('ON LOADED FINISH', `load-tiles-progress ${sendProgress} loading:${this.counter.loading} complete:${this.counter.complete} errors:${this.counter.errors} total:${this.counter.images}`)
+
     if (this.counter.complete + this.counter.errors === this.counter.images) {
       if (this.counter.errors > 0) {
-        const self = this
-        if (!this.waitTimer) {
-          this.waitTimer = setTimeout(() => {
-            self.loadTiles()
-          }, this.waitTimerTimeout)
+        if (this.waitTimer) {
+          if (this.counter.loading === 0) {
+            this.startWaitTimer()
+          } else {
+            this.log('ON LOADED FINISH', 'wait timer already started')
+          }
+        } else {
+          this.startWaitTimer()
         }
       } else {
-        this.emit('load-tiles-complete')
+        this.log('ON LOADED FINISH', 'load-tiles-complete')
       }
+    }
+
+    if (this.counter.complete === this.counter.images) {
+      this.emit('load-tiles-complete')
     } else {
-      if (sendProgress) {
-        this.emit('load-tiles-progress', this.counter)
-      }
+      this.emit('load-tiles-progress', this.counter)
     }
   }
 
   onImageLoadedComplete (tile) {
     this.loaded[tile] = 1
     this.busy = false
+    this.counter.loading--
     this.onImageLoadedFinish(true)
   }
 
   onImageLoadedError (tile) {
     this.loaded[tile] = 0
     this.busy = false
+    this.counter.loading--
     this.onImageLoadedFinish(false)
   }
 
   loadTiles () {
-    if (this.waitTimer) {
-      clearTimeout(this.waitTimer)
-    }
+    this.log('LOAD TILES', 'start loadTiles')
 
     this.counter.images = this.grid.size.x * this.grid.size.y
     this.counter.complete = 0
     this.counter.errors = 0
+    this.counter.loading = 0
 
     for (let x = 0; x < this.grid.size.x; x++) {
       for (let y = 0; y < this.grid.size.y; y++) {
         this.loadTile(x, y)
       }
     }
-
-    this.emit('load-tiles-started')
   }
 
   loadTile (x, y) {
-    let self = this
+    // let self = this
 
     const tileX = this.grid.begin.x + x
     const tileY = this.grid.begin.y + y
@@ -171,31 +209,46 @@ export default class TilesLoader {
     const zoom = this.mapping.getZoom()
 
     if (this.loaded[tile]) {
+      this.log('LOAD TILE +++', `tile ${tile} already loaded `)
       return
+    } else {
+      this.log('LOAD TILE', `start load tile ${tile}`)
     }
 
     if (this.cache.exist(zoom, tile)) {
-      const cachedImage = this.cache.get(zoom, tile)
-      this.ctx.drawImage(cachedImage, x * 256, y * 256)
-      // this.loaded[tile] = 1
-      console.log(`draw from images cache ${tile}`)
-      this.onImageLoadedComplete(tile)
+      this.loadTileImageFromCache(x, y, tile, tileX, tileY, zoom)
     } else {
-      const img = new Image()
-
-      img.addEventListener('load', function (event) {
-        self.ctx.drawImage(this, x * 256, y * 256)
-        // self.loaded[tile] = 1
-        self.cache.put(zoom, tile, this)
-        self.onImageLoadedComplete(tile)
-      })
-
-      img.addEventListener('error', function (event) {
-        self.onImageLoadedError(tile)
-      })
-
-      this.busy = true
-      img.src = this.mapping.getTileImageFileName(tileX, tileY)
+      this.loadTileImage(x, y, tile, tileX, tileY, zoom)
     }
+  }
+
+  loadTileImage (x, y, tile, tileX, tileY, zoom) {
+    let self = this
+
+    const img = new Image()
+
+    img.addEventListener('load', function (event) {
+      self.ctx.drawImage(this, x * 256, y * 256)
+      self.cache.put(zoom, tile, this)
+      self.log('LOAD TILE ***', `tile ${tile} loaded`)
+      self.onImageLoadedComplete(tile)
+    })
+
+    img.addEventListener('error', function (event) {
+      self.log('LOAD TILE !!!', `tile ${tile} error`)
+      self.onImageLoadedError(tile)
+    })
+
+    this.busy = true
+    this.counter.loading++
+    img.src = this.mapping.getTileImageFileName(tileX, tileY)
+  }
+
+  loadTileImageFromCache (x, y, tile, tileX, tileY, zoom) {
+    const cachedImage = this.cache.get(zoom, tile)
+    this.ctx.drawImage(cachedImage, x * 256, y * 256)
+    this.log('LOAD TILE', `tile ${tile} get from cache`)
+    this.counter.loading++
+    this.onImageLoadedComplete(tile)
   }
 }
