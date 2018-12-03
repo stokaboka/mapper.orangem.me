@@ -6,5 +6,7 @@ export default {
 
   selectionLayerVisible: true,
 
-  selectedObject: null
+  selectedObject: null,
+
+  deviceGroups: []
 }

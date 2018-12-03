@@ -18,4 +18,14 @@ const setLayer = ({ commit }, {layer, vm}) => {
   vm.$dataProvider.setLayer(layer)
 }
 
-export {loadLayers, setLayer}
+const getDeviceGroups = ({ commit }, { vm }) => {
+  vm.$dataProvider.loadDeviceGroups()
+    .then((response) => {
+      commit('setDeviceGroups', response)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+export {loadLayers, setLayer, getDeviceGroups}

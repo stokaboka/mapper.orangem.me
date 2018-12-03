@@ -22,11 +22,17 @@ const selectedObject = (state) => {
   return state.selectedObject
 }
 
+const deviceGroups = (state) => {
+  return state.deviceGroups
+}
+
 export {
   layers,
   layersReady,
   mapReady,
   ready,
   selectionLayerVisible,
-  selectedObject
+  selectedObject,
+
+  deviceGroups
 }

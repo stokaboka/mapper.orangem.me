@@ -145,7 +145,7 @@ export default class DataProvider {
    * @returns {Promise<AxiosResponse<any>>}
    */
   async loadLayer (layer) {
-    let url = `${this.baseUrl}/lon/${this.mapper.geoPoint.lon}/lat/${this.mapper.geoPoint.lat}/zoom/${this.mapper.getZoom()}/layer/${layer}`
+    let url = `${this.baseUrl}/dp/lon/${this.mapper.geoPoint.lon}/lat/${this.mapper.geoPoint.lat}/zoom/${this.mapper.getZoom()}/layer/${layer}`
 
     let response = await axios.get(url)
       .then((resp) => {
@@ -159,7 +159,7 @@ export default class DataProvider {
   }
 
   async loadLayers () {
-    let url = `${this.baseUrl}/layers`
+    let url = `${this.baseUrl}/dp/layers`
     let response = await axios.get(url)
       .then((resp) => {
         this.layers = this.prepareLayers(resp.data)
@@ -173,10 +173,23 @@ export default class DataProvider {
   }
 
   async getObjectInfo (objectInfo) {
-    let url = `${this.baseUrl}/layer/${objectInfo.layer.id}/object/${objectInfo.object.id}`
+    let url = `${this.baseUrl}/dp/layer/${objectInfo.layer.id}/object/${objectInfo.object.id}`
     let response = await axios.get(url)
       .then((resp) => {
         return resp
+      })
+      .catch((err) => {
+        console.log(err)
+        return err
+      })
+    return response
+  }
+
+  async loadDeviceGroups () {
+    let url = `${this.baseUrl}/dg`
+    let response = await axios.get(url)
+      .then((resp) => {
+        return resp.data
       })
       .catch((err) => {
         console.log(err)

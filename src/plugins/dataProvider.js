@@ -2,7 +2,7 @@
 import DataProvider from '../lib/model/DataProvider'
 
 // localhost
-const dpBaseUrl = 'http://localhost:3333/dp'
+const dpBaseUrl = 'http://localhost:3333'
 
 // orangem.me
 // const dpBaseUrl = 'http://orangem.me:3333/dp'

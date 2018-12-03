@@ -98,6 +98,11 @@ const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('model'
 export default {
   name: 'Main',
   components: {ObjectCard},
+
+  mounted () {
+    this.getDeviceGroups({vm: this})
+  },
+
   data () {
     return {
       leftDrawerOpen: this.$q.platform.is.desktop
@@ -120,7 +125,7 @@ export default {
       }
     },
 
-    ...mapGetters(['layers', 'selectedObject'])
+    ...mapGetters(['layers', 'selectedObject', 'deviceGroups'])
   },
 
   methods: {
@@ -130,7 +135,7 @@ export default {
       // this.$dataProvider.setLayer(layer)
     },
     ...mapMutations(['setSelectionLayerVisible', 'setSelectedObject']),
-    ...mapActions(['setLayer'])
+    ...mapActions(['setLayer', 'getDeviceGroups'])
   }
 }
 </script>
