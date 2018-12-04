@@ -16,13 +16,13 @@
 
         <q-toolbar-title>
           Mapper
-          <div slot="subtitle">The Mapper is a high performance mapping system v{{ $q.version }}</div>
+          <div slot="subtitle">V{{ $q.version }}</div>
         </q-toolbar-title>
 
         <q-tabs>
-          <q-route-tab slot="title" icon="view_quilt" to="/about" replace hide="icon" label="About" />
-          <q-route-tab slot="title" icon="view_day" to="/map" replace hide="icon" label="Map" />
-          <q-route-tab slot="title" icon="view_day" to="/settings" replace label="Settings" />
+          <q-route-tab slot="title" icon="view_quilt" to="/about" replace hide="icon" label="About" ></q-route-tab>
+          <q-route-tab slot="title" icon="view_day" to="/map" replace hide="icon" label="Map" ></q-route-tab>
+          <q-route-tab slot="title" icon="view_day" to="/settings" replace label="Settings" ></q-route-tab>
         </q-tabs>
 
       </q-toolbar>
@@ -33,47 +33,21 @@
       v-model="leftDrawerOpen"
       :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
     >
+
       <q-list
         no-border
         inset-delimiter
         highlight>
 
-        <q-collapsible opened icon="layers" label="Группы устройств">
-          <div>
-            <q-list no-border>
-              <q-item
-                v-for="deviceGroup in deviceGroups"
-                :key="deviceGroup.id">
-                <q-item-main>
-                  <q-btn label="deviceGroup.name" align="left" flat></q-btn>
-                </q-item-main>
-              </q-item>
-            </q-list>
-
-          </div>
+        <q-collapsible opened icon="map" label="Группы устройств">
+          <device-groups></device-groups>
         </q-collapsible>
 
         <q-item-separator />
 
-          <q-collapsible opened icon="layers" label="Слои">
-            <div>
-              <q-list no-border>
-                <q-item
-                  v-for="layer in xLayers"
-                  :key="layer.id">
-                  <q-item-main>
-                    <q-checkbox v-model="layer.visible" :label="layer.label" @input="setLayerData(layer)" />
-                  </q-item-main>
-                </q-item>
-                <q-item>
-                  <q-item-main>
-                    <q-checkbox v-model="selectionLayerVisible" label="Selection"/>
-                  </q-item-main>
-                </q-item>
-              </q-list>
-
-            </div>
-          </q-collapsible>
+        <q-collapsible opened icon="layers" label="Слои">
+          <layers-list></layers-list>
+         </q-collapsible>
 
         <q-item-separator />
 
@@ -107,18 +81,16 @@
 
 <script>
 
-import { openURL } from 'quasar'
+// import { openURL } from 'quasar'
 import {createNamespacedHelpers} from 'vuex'
 import ObjectCard from '../components/ObjectCard'
-const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('model')
+import LayersList from '../components/datamodel/LayersList'
+import DeviceGroups from '../components/datamodel/DeviceGroups'
+const { mapGetters } = createNamespacedHelpers('model')
 
 export default {
   name: 'Main',
-  components: {ObjectCard},
-
-  mounted () {
-    this.getDeviceGroups({vm: this})
-  },
+  components: {DeviceGroups, LayersList, ObjectCard},
 
   data () {
     return {
@@ -127,32 +99,11 @@ export default {
   },
 
   computed: {
-    xLayers () {
-      return this.layers.map((layer) => {
-        return {...layer}
-      })
-    },
-
-    selectionLayerVisible: {
-      get () {
-        return this.$store.getters['model/selectionLayerVisible']
-      },
-      set (value) {
-        this.$store.commit('model/setSelectionLayerVisible', value)
-      }
-    },
-
-    ...mapGetters(['layers', 'selectedObject', 'deviceGroups'])
+    ...mapGetters(['selectedObject'])
   },
 
   methods: {
-    openURL,
-    setLayerData (layer) {
-      this.setLayer({layer, vm: this})
-      // this.$dataProvider.setLayer(layer)
-    },
-    ...mapMutations(['setSelectionLayerVisible', 'setSelectedObject']),
-    ...mapActions(['setLayer', 'getDeviceGroups'])
+    // openURL
   }
 }
 </script>

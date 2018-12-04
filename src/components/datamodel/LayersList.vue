@@ -21,7 +21,7 @@
 <script>
 
 import {createNamespacedHelpers} from 'vuex'
-const { mapGetters, mapMutations, mapActions } = createNamespacedHelpers('model')
+const { mapGetters, mapActions } = createNamespacedHelpers('model')
 
 export default {
   name: 'LayersList',
@@ -45,15 +45,14 @@ export default {
       }
     },
 
-    ...mapGetters(['layers', 'selectedObject', 'deviceGroups'])
+    ...mapGetters(['layers'])
   },
 
   methods: {
     setLayerData (layer) {
       this.setLayer({layer, vm: this})
     },
-    ...mapMutations(['setSelectionLayerVisible', 'setSelectedObject']),
-    ...mapActions(['setLayer', 'getDeviceGroups'])
+    ...mapActions(['setLayer'])
   }
 
 }

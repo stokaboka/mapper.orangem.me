@@ -28,4 +28,15 @@ const getDeviceGroups = ({ commit }, { vm }) => {
     })
 }
 
-export {loadLayers, setLayer, getDeviceGroups}
+const setDeviceGroup = ({ commit }, {value, vm}) => {
+  commit('setDeviceGroup', value)
+  const newRoute = Object.assign(
+    {},
+    vm.$route.params,
+    value.point,
+    {zoom: vm.$mapping.getZoom()}
+  )
+  vm.$router.push({name: 'map', params: newRoute})
+}
+
+export {loadLayers, setLayer, getDeviceGroups, setDeviceGroup}

@@ -195,8 +195,6 @@ class Mapping {
 
     this.beginTilePixels = this.tilesCalculator.tileToPixels(this.beginTile)
 
-    // this.doLoadTiles(geoPoint, 0)
-
     return {
       geoPoint,
       begin: this.beginTile,

@@ -185,11 +185,18 @@ export default class DataProvider {
     return response
   }
 
+  prepareDeviceGroups (elements) {
+    const out = elements.map((element) => {
+      return Object.assign(element, {point: JSON.parse(element.point)})
+    })
+    return out
+  }
+
   async loadDeviceGroups () {
     let url = `${this.baseUrl}/dg`
     let response = await axios.get(url)
       .then((resp) => {
-        return resp.data
+        return this.prepareDeviceGroups(resp.data)
       })
       .catch((err) => {
         console.log(err)
