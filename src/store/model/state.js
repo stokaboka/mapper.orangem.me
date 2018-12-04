@@ -8,5 +8,6 @@ export default {
 
   selectedObject: null,
 
-  deviceGroups: []
+  deviceGroups: [],
+  deviceGroup: {}
 }

@@ -26,6 +26,10 @@ const deviceGroups = (state) => {
   return state.deviceGroups
 }
 
+const deviceGroup = (state) => {
+  return state.deviceGroup
+}
+
 export {
   layers,
   layersReady,
@@ -34,5 +38,6 @@ export {
   selectionLayerVisible,
   selectedObject,
 
-  deviceGroups
+  deviceGroups,
+  deviceGroup
 }

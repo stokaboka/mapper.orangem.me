@@ -42,6 +42,10 @@ const setDeviceGroups = (state, values) => {
   state.deviceGroups = values
 }
 
+const setDeviceGroup = (state, values) => {
+  state.deviceGroup = values
+}
+
 export {
   setLayers,
   setLayer,
@@ -53,5 +57,6 @@ export {
   setSelectionLayerVisible,
   setSelectedObject,
 
-  setDeviceGroups
+  setDeviceGroups,
+  setDeviceGroup
 }

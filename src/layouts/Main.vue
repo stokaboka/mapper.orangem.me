@@ -38,6 +38,23 @@
         inset-delimiter
         highlight>
 
+        <q-collapsible opened icon="layers" label="Группы устройств">
+          <div>
+            <q-list no-border>
+              <q-item
+                v-for="deviceGroup in deviceGroups"
+                :key="deviceGroup.id">
+                <q-item-main>
+                  <q-btn label="deviceGroup.name" align="left" flat></q-btn>
+                </q-item-main>
+              </q-item>
+            </q-list>
+
+          </div>
+        </q-collapsible>
+
+        <q-item-separator />
+
           <q-collapsible opened icon="layers" label="Слои">
             <div>
               <q-list no-border>
