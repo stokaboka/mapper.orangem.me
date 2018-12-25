@@ -3,7 +3,7 @@
 
     <q-layout-header>
 
-      <q-toolbar color="primary">
+      <q-toolbar color="amber" text-color="black">
         <q-btn
           flat
           dense
@@ -16,10 +16,10 @@
 
         <q-toolbar-title>
           Mapper
-          <div slot="subtitle">V{{ $q.version }}</div>
+          <div slot="subtitle">V-{{ $q.version }}</div>
         </q-toolbar-title>
 
-        <q-tabs>
+        <q-tabs color="amber" text-color="black">
           <q-route-tab slot="title" icon="view_quilt" to="/about" replace hide="icon" label="About" ></q-route-tab>
           <q-route-tab slot="title" icon="view_day" to="/map" replace hide="icon" label="Map" ></q-route-tab>
           <q-route-tab slot="title" icon="view_day" to="/settings" replace label="Settings" ></q-route-tab>

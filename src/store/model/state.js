@@ -9,5 +9,5 @@ export default {
   selectedObject: null,
 
   deviceGroups: [],
-  deviceGroup: {id: 0, name: 'Группы устройств-'}
+  deviceGroup: {id: 0, name: 'Группы устройств'}
 }
